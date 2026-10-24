@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 90" width="340" height="90">
+  <defs>
+    <linearGradient id="gesOrangeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF5722"/>
+      <stop offset="100%" stop-color="#E64A19"/>
+    </linearGradient>
+    <linearGradient id="gesAccentGrad" x1="0%" y1="50%" x2="100%" y2="50%">
+      <stop offset="0%" stop-color="#E64A19"/>
+      <stop offset="50%" stop-color="#FF7043"/>
+      <stop offset="100%" stop-color="#D84315"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Top Logo Emblem (Oval with GES) -->
+  <g transform="translate(170, 26)">
+    <!-- Outer stylized oval ring -->
+    <ellipse cx="0" cy="0" rx="58" ry="21" fill="none" stroke="url(#gesOrangeGrad)" stroke-width="4.5" stroke-linecap="round"/>
+    <!-- Dynamic swoosh accent -->
+    <path d="M -48 6 C -20 18, 25 18, 52 4" fill="none" stroke="url(#gesAccentGrad)" stroke-width="3" stroke-linecap="round" opacity="0.9"/>
+    <path d="M -52 -4 C -25 -18, 20 -18, 48 -6" fill="none" stroke="url(#gesOrangeGrad)" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/>
+    <!-- Center GES text -->
+    <text x="0" y="6" text-anchor="middle" font-family="'Inter', 'Helvetica Neue', Arial, sans-serif" font-weight="900" font-size="20" letter-spacing="4" fill="#1E293B">GES</text>
+  </g>
+
+  <!-- Bottom Brand Text -->
+  <text x="170" y="66" text-anchor="middle" font-family="'Inter', 'Helvetica Neue', Arial, sans-serif" font-weight="800" font-size="14.5" letter-spacing="3.2" fill="#1E293B">GEORGETOWN</text>
+  <text x="170" y="81" text-anchor="middle" font-family="'Inter', 'Helvetica Neue', Arial, sans-serif" font-weight="600" font-size="8.5" letter-spacing="3.5" fill="#64748B">ELECTRICAL SYSTEMS</text>
+</svg>
