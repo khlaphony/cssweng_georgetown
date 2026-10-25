@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us | Georgetown Electrical Systems</title>
+  <meta name="description" content="Get in touch with Georgetown Electrical Systems for wholesale, retail, and industrial electrical engineering services in the Philippines.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="logo" aria-label="Georgetown Electrical Systems">
+        <img src="images/ges-logo.svg" alt="Georgetown Electrical Systems Logo" class="logo-img">
+      </a>
+      <nav aria-label="Main Navigation">
+        <ul class="nav-links">
+          <li><a href="#" class="nav-link">Home</a></li>
+          <li><a href="#" class="nav-link">Products</a></li>
+          <li><a href="#" class="nav-link">Services</a></li>
+          <li><a href="#" class="nav-link active">Contact Us</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero with Frosted Glass Contact Form -->
+  <main class="hero">
+    <div class="hero-bg" aria-hidden="true">
+      <img src="images/hero-bg.jpg" alt="Philippine Electrical Transmission Grid Sunset">
+      <div class="hero-overlay"></div>
+    </div>
+
+    <div class="hero-inner">
+      <!-- Left Hero Pitch -->
+      <div class="hero-content">
+        <h1 class="hero-title">
+          Empowering<br>
+          the Philippine<br>
+          Electricity<br>
+          Market
+        </h1>
+      </div>
+
+      <!-- Right Form Card (Glassmorphic) -->
+      <div class="glass-card-wrapper">
+        <section class="form-card" aria-label="Contact Form">
+          <form id="contact-form" novalidate autocomplete="on">
+            <div class="form-group">
+              <label for="contactName">Contact<span class="req">*</span></label>
+              <div class="input-wrap">
+                <input type="text" id="contactName" name="contactName" placeholder="Enter your full name here" required>
+              </div>
+              <span class="err" id="contactName-error">Please enter your name</span>
+            </div>
+
+            <div class="form-group">
+              <label for="companyName">Company Name</label>
+              <div class="input-wrap">
+                <input type="text" id="companyName" name="companyName" placeholder="Enter your company name here">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="email">Email<span class="req">*</span></label>
+              <div class="input-wrap">
+                <input type="email" id="email" name="email" placeholder="Enter your email address here" required>
+              </div>
+              <span class="err" id="email-error">Please enter a valid email address</span>
+            </div>
+
+            <div class="form-group">
+              <label for="mobileNumber">Mobile Number (preferably w/ Viber)<span class="req">*</span></label>
+              <div class="input-wrap">
+                <input type="tel" id="mobileNumber" name="mobileNumber" placeholder="Enter your mobile number here" required>
+              </div>
+              <span class="err" id="mobileNumber-error">Please enter your mobile number</span>
+            </div>
+
+            <div class="form-group">
+              <label for="message">Message<span class="req">*</span></label>
+              <div class="input-wrap">
+                <textarea id="message" name="message" placeholder="Enter your message here..." required rows="3"></textarea>
+              </div>
+              <span class="err" id="message-error">Please enter a message</span>
+            </div>
+
+            <button type="submit" id="btn-submit">
+              <span class="btn-text">Submit</span>
+              <span class="btn-arrow">→</span>
+            </button>
+          </form>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <!-- Notification Toast Container -->
+  <div id="toast-container" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
