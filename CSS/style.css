@@ -1,0 +1,207 @@
+/* Reset & Global Tokens */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+:root {
+  /* GES Brand Palette extracted from mockups */
+  --color-primary: #E05328;       /* Primary Rust/Orange */
+  --color-primary-hover: #C8441C; /* Hover state */
+  --color-accent-light: #FDE8E1;  /* Soft peach pill background for active tab */
+  
+  /* Text & Neutral Colors */
+  --color-text-dark: #27272A;     /* Nav link text */
+  --color-text-light: #FFFFFF;    /* Hero text & form labels */
+  --color-text-muted: #71717A;   /* Input placeholder text */
+
+  /* Glassmorphism Panel & Form Elements */
+  --glass-bg: rgba(255, 255, 255, 0.14);
+  --glass-border: rgba(255, 255, 255, 0.25);
+  --input-bg: #F4F4F5;
+  --input-radius: 10px;
+}
+
+body {
+  background-color: #000000;
+  color: var(--color-text-dark);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* --- NAVIGATION BAR --- */
+.navbar {
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.nav-inner {
+  max-width: 1260px;
+  margin: 0 auto;
+  padding: 0 36px;
+  height: 74px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.logo:hover {
+  transform: scale(1.02);
+  opacity: 0.95;
+}
+
+.logo-img {
+  height: 48px;
+  width: auto;
+  display: block;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-link {
+  text-decoration: none;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #475569;
+  padding: 9px 18px;
+  border-radius: 9999px; /* Pill shape */
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.nav-link:hover {
+  color: #E64A19;
+  background: rgba(255, 87, 34, 0.07);
+}
+
+.nav-link.active {
+  color: #E64A19;
+  background: rgba(255, 87, 34, 0.1);
+  border: 1px solid rgba(255, 87, 34, 0.2);
+}
+
+/* --- HERO SECTION --- */
+.hero-container {
+  min-height: calc(100vh - 65px);
+  background: url('../assets/hero-bg.jpg') no-repeat center center/cover;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.hero-overlay {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  min-height: calc(100vh - 65px);
+  padding: 3rem 8%;
+  background: rgba(0, 0, 0, 0.35); /* Subtle dark overlay for contrast */
+  gap: 2rem;
+}
+
+.hero-content {
+  flex: 1;
+  max-width: 550px;
+}
+
+.hero-content h1 {
+  color: var(--color-text-light);
+  font-size: 3.5rem;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+/* --- GLASSMORPHIC FORM CARD --- */
+.form-card {
+  flex: 1;
+  max-width: 480px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 2rem 2.25rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.form-group {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  color: var(--color-text-light);
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: var(--input-radius);
+  border: 1px solid transparent;
+  background-color: var(--input-bg);
+  font-size: 0.9rem;
+  color: #18181B;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: var(--color-text-muted);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--color-primary);
+  background-color: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(224, 83, 40, 0.2);
+}
+
+.form-group select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2371717A' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1.25rem;
+  cursor: pointer;
+}
+
+button, 
+input[type="submit"] {
+  border-radius: 12px; 
+  border: none;        
+  padding: 10px 20px;  
+  background: #FFFFFF;
+  cursor: pointer;
+}
