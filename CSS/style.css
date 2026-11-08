@@ -196,3 +196,82 @@ body {
   background-size: 1.25rem;
   cursor: pointer;
 }
+
+/* --- HOME PAGE HERO --- */
+.hero-home {
+  justify-content: center;
+  text-align: center;
+}
+
+.hero-content-center {
+  max-width: 760px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hero-content-center h1 {
+  font-size: 3.75rem;
+}
+
+.hero-subtitle {
+  color: var(--color-text-light);
+  font-size: 1.15rem;
+  line-height: 1.6;
+  max-width: 620px;
+  margin-top: 1.25rem;
+  opacity: 0.92;
+}
+
+.hero-cta-group {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+/* Scoped to the hero so other pages' buttons aren't affected */
+.hero-cta-group .btn-primary,
+.hero-cta-group .btn-secondary {
+  display: inline-block;
+  padding: 0.85rem 1.75rem;
+  border-radius: 9999px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.hero-cta-group .btn-primary {
+  background: var(--color-primary);
+  color: var(--color-text-light);
+  border: 1px solid var(--color-primary);
+}
+
+.hero-cta-group .btn-primary:hover {
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+  transform: translateY(-1px);
+}
+
+.hero-cta-group .btn-secondary {
+  background: transparent;
+  color: var(--color-text-light);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.hero-cta-group .btn-secondary:hover {
+  background: var(--glass-bg);
+  border-color: var(--color-text-light);
+}
+
+@media (max-width: 768px) {
+  .hero-content-center h1 {
+    font-size: 2.5rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+}
