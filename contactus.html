@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us | Georgetown Electrical Systems</title>
+  <meta name="description" content="Get in touch with Georgetown Electrical Systems for wholesale, retail, and industrial electrical engineering services in the Philippines.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="navbar">
+    <a href="index.html" class="logo-container" aria-label="Georgetown Electrical Systems">
+      <img src="assets/logo.png" alt="Georgetown Electrical Systems Logo" class="logo">
+    </a>
+    <nav class="nav-links" aria-label="Main Navigation">
+      <a href="index.html" class="nav-item">Home</a>
+      <a href="products.html" class="nav-item">Products</a>
+      <a href="services.html" class="nav-item">Services</a>
+      <a href="contactus.html" class="nav-item active">Contact Us</a>
+      <a href="apply.html" class="nav-item">Apply Here</a>
+    </nav>
+  </header>
+
+  <!-- Hero with Frosted Glass Contact Form -->
+  <main class="hero-container">
+    <div class="hero-overlay">
+      <!-- Left Hero Pitch -->
+      <div class="hero-content">
+        <h1 class="hero-title">
+          Empowering<br>
+          the Philippine<br>
+          Electricity<br>
+          Market
+        </h1>
+      </div>
+
+      <!-- Right Form Card (Glassmorphic) -->
+      <section class="form-card" aria-label="Contact Form">
+          <form id="contact-form" novalidate autocomplete="on">
+            <div class="form-group">
+              <label for="contactName">Contact<span class="req">*</span></label>
+              <div class="input-wrap">
+                <input type="text" id="contactName" name="contactName" placeholder="Enter your full name here" required>
+              </div>
+              <span class="err" id="contactName-error">Please enter your name</span>
+            </div>
+
+            <div class="form-group">
+              <label for="companyName">Company Name</label>
+              <div class="input-wrap">
+                <input type="text" id="companyName" name="companyName" placeholder="Enter your company name here">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="email">Email<span class="req">*</span></label>
+              <div class="input-wrap">
+                <input type="email" id="email" name="email" placeholder="Enter your email address here" required>
+              </div>
+              <span class="err" id="email-error">Please enter a valid email address</span>
+            </div>
+
+            <div class="form-group">
+              <label for="mobileNumber">Mobile Number (preferably w/ Viber)<span class="req">*</span></label>
+              <div class="input-wrap">
+                <input type="tel" id="mobileNumber" name="mobileNumber" placeholder="Enter your mobile number here" required>
+              </div>
+              <span class="err" id="mobileNumber-error">Please enter your mobile number</span>
+            </div>
+
+            <div class="form-group">
+              <label for="message">Message<span class="req">*</span></label>
+              <div class="input-wrap">
+                <textarea id="message" name="message" placeholder="Enter your message here..." required rows="3"></textarea>
+              </div>
+              <span class="err" id="message-error">Please enter a message</span>
+            </div>
+
+            <button type="submit" id="btn-submit" class="btn-primary">
+              <span class="btn-text">Submit</span>
+              <span class="btn-arrow">→</span>
+            </button>
+          </form>
+      </section>
+    </div>
+  </main>
+
+  <!-- Notification Toast Container -->
+  <div id="toast-container" aria-live="polite"></div>
+
+  <script src="js/contact.js"></script>
+</body>
+</html>
