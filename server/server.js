@@ -7,8 +7,12 @@ const pool = require('./db'); // loads server/.env too
 
 const app = express();
 const root = path.join(__dirname, '..');
-const uploadDir = process.env.UPLOAD_DIR || path.join(root, 'uploads', 'resumes');
-fs.mkdirSync(uploadDir, { recursive: true });
+const uploadRoot = process.env.UPLOAD_DIR || path.join(root, 'uploads');
+const uploadDirs = {
+  resume: path.join(uploadRoot, 'resumes'),
+  citizenship: path.join(uploadRoot, 'citizenship'),
+};
+Object.values(uploadDirs).forEach(d => fs.mkdirSync(d, { recursive: true }));
 
 app.use(express.json());
 
@@ -84,16 +88,19 @@ const PROOF_EXT = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png'];
 
 const upload = multer({
   storage: multer.diskStorage({
-    destination: uploadDir,
+    destination: (req, file, cb) => cb(null, uploadDirs[file.fieldname]),
     filename: (req, file, cb) =>
       cb(null, crypto.randomUUID() + path.extname(file.originalname).toLowerCase()),
   }),
   limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB per file
   fileFilter: (req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase();
-    const allowed = file.fieldname === 'citizenship' ? PROOF_EXT : RESUME_EXT;
-    cb(null, allowed.includes(ext)); // rejected files are skipped, then caught below
-  },
+  if (!uploadDirs[file.fieldname]) {
+    return cb(new multer.MulterError('LIMIT_UNEXPECTED_FILE', file.fieldname));
+  }
+  const ext = path.extname(file.originalname).toLowerCase();
+  const allowed = file.fieldname === 'citizenship' ? PROOF_EXT : RESUME_EXT;
+  cb(null, allowed.includes(ext));
+},
 });
 
 const uploadFiles = upload.fields([
