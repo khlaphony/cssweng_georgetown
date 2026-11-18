@@ -1,20 +1,18 @@
 // imports
 const express = require('express');
-const upload = require('../server/server');
 const { submitApplication } = require('../controllers/applyController');
+const { uploadApplicationFiles } = require('../middleware/upload');
+const { validateApplication } = require('../middleware/validateApplication');
 
 // router
 const router = express.Router();
 
-// routes definitions
-// / == POST /api/apply since this router is mounted at /api/apply in server.js
+// mounted at /api/applications in server.js, so '/' is POST /api/applications
 router.post(
   '/',
-  upload.fields([
-    { name: 'resume', maxCount: 1 },
-    { name: 'citizenship', maxCount: 1 },
-  ]),
-  submitApplication
+  ...uploadApplicationFiles, // multer + magic-byte checks
+  ...validateApplication,    // form-field + files-present validation
+  submitApplication          // transaction insert
 );
 
 // export
