@@ -1,0 +1,178 @@
+/* Dashboard styles. Uses the same brand tokens as style.css
+   (--color-primary, --color-primary-hover, --color-accent-light).
+   Scoped under .dashboard so other pages are unaffected. */
+
+.dashboard {
+    --dash-bg: #f4f4f5;
+    --dash-surface: #ffffff;
+    --dash-text: #27272a;
+    --dash-muted: #71717a;
+    --dash-border: #e4e4e7;
+    --dash-danger: #b42318;
+    --dash-success: #137a3f;
+
+    min-height: calc(100vh - 74px);
+    padding: 2.5rem 1.5rem 3rem;
+    background: var(--dash-bg);
+    color: var(--dash-text);
+}
+
+.dashboard>* {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.dash-heading {
+    margin-bottom: 1.5rem;
+}
+
+.dash-heading h1 {
+    margin: 0 0 0.25rem;
+    font-size: 1.75rem;
+    line-height: 1.2;
+}
+
+#dash-message {
+    min-height: 1.4em;
+    font-size: 0.95rem;
+}
+
+.dash-error {
+    color: var(--dash-danger);
+}
+
+.dash-success {
+    color: var(--dash-success);
+}
+
+/* Summary */
+.dash-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.summary-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1rem 1.25rem;
+    background: var(--dash-surface);
+    border: 1px solid var(--dash-border);
+    border-radius: 12px;
+}
+
+.summary-value {
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+
+.summary-label {
+    font-size: 0.9rem;
+    color: var(--dash-muted);
+}
+
+.summary-status .dash-btn {
+    align-self: flex-start;
+    margin-top: 0.5rem;
+}
+
+/* Table */
+.table-wrap {
+    overflow-x: auto;
+    background: var(--dash-surface);
+    border: 1px solid var(--dash-border);
+    border-radius: 12px;
+}
+
+.app-table {
+    width: 100%;
+    min-width: 860px;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+.app-table th,
+.app-table td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1px solid var(--dash-border);
+}
+
+.app-table th {
+    font-weight: 600;
+    background: var(--color-accent-light);
+}
+
+.app-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.table-empty {
+    padding: 2rem 1rem;
+    text-align: center;
+    color: var(--dash-muted);
+}
+
+.file-link {
+    display: inline-block;
+    margin-right: 0.75rem;
+    color: var(--color-primary-hover);
+    text-decoration: underline;
+}
+
+/* Buttons */
+.dash-btn {
+    padding: 0.55rem 1.1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #fff;
+    background: var(--color-primary);
+    border: none;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.dash-btn:hover:not(:disabled) {
+    background: var(--color-primary-hover);
+}
+
+.dash-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.dash-btn-danger {
+    background: var(--dash-danger);
+}
+
+.dash-btn-danger:hover:not(:disabled) {
+    background: #912018;
+}
+
+.dash-btn:focus-visible,
+.file-link:focus-visible,
+.logout-btn:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* Logout button in the navbar: .nav-link already styles it like the other links */
+.logout-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}

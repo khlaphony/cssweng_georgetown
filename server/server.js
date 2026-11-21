@@ -2,6 +2,8 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const pool = require('./db'); // loads server/.env
+const auth = require('./utils/auth');
+
 
 const app = express();
 const root = path.join(__dirname, '..');
@@ -10,6 +12,8 @@ app.use(express.json());
 
 // ---------- API routers ----------
 app.use('/api/applications', require('./routes/applyRoutes'));
+app.use('/api/applications', require('./routes/applyRoutes'));
+app.use('/api', require('./routes/adminRoutes'));
 
 // ---------- Static site ----------
 // URLs are lowercase; match the real folder name whatever its case.
@@ -20,11 +24,24 @@ const rootEntries = fs.readdirSync(root);
   if (actual) app.use('/' + name, express.static(path.join(root, actual)));
 });
 
+
 ['index', 'products', 'services', 'contactus', 'apply'].forEach((page) => {
   const file = path.join(root, `${page}.html`);
   if (!fs.existsSync(file)) return;
   app.get(`/${page}.html`, (req, res) => res.sendFile(file));
   if (page === 'index') app.get('/', (req, res) => res.sendFile(file));
+});
+
+// ---------- Admin pages ----------
+app.get('/login', (req, res) => {
+  // already logged in? skip straight to the dashboard
+  if (auth.getSession(req)) return res.redirect('/dashboard.html');
+  res.sendFile(path.join(root, 'login.html'));
+});
+
+app.get('/dashboard.html', (req, res) => {
+  if (!auth.getSession(req)) return res.redirect('/login');
+  res.sendFile(path.join(root, 'dashboard.html'));
 });
 
 // ---------- Helpers ----------
