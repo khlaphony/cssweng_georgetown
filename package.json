@@ -1,0 +1,29 @@
+{
+  "name": "cssweng_georgetown",
+  "version": "1.0.0",
+  "description": "GeorgeTown Incident",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/khlaphony/cssweng_georgetown.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/khlaphony/cssweng_georgetown/issues"
+  },
+  "homepage": "https://github.com/khlaphony/cssweng_georgetown#readme",
+  "dependencies": {
+    "dotenv": "^18.0.9",
+    "express": "^5.3.0",
+    "express-validator": "^7.3.2",
+    "multer": "^2.5.0",
+    "mysql2": "^3.24.6"
+  }
+}

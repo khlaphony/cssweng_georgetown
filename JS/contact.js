@@ -1,15 +1,16 @@
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("contact-form");
+  const submitBtn = document.getElementById("btn-submit");
   const requiredFields = ["contactName", "email", "mobileNumber", "message"];
 
   if (!form) return;
 
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const values = Object.fromEntries(new FormData(form).entries());
     const invalidFields = requiredFields.filter((id) => {
-      const value = values[id].trim();
+      const value = (values[id] || "").trim();
       return id === "email"
         ? !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
         : value.length === 0;
@@ -22,26 +23,35 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const submission = {
-      id: Date.now(),
       contactName: values.contactName.trim(),
-      companyName: values.companyName.trim(),
+      companyName: (values.companyName || "").trim(),
       email: values.email.trim(),
       mobileNumber: values.mobileNumber.trim(),
       message: values.message.trim(),
-      submittedAt: new Date().toISOString()
     };
 
+    // Prevent double submissions while the request is in flight
+    if (submitBtn) submitBtn.disabled = true;
+
     try {
-      const submissions = JSON.parse(
-        localStorage.getItem("gesContactSubmissions") || "[]"
-      );
-      submissions.push(submission);
-      localStorage.setItem("gesContactSubmissions", JSON.stringify(submissions));
-      alert("Thank you! Your message has been saved in this browser.");
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(submission),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || "Something went wrong.");
+      }
+
+      alert("Thank you! Your message has been sent.");
       form.reset();
     } catch (error) {
-      console.error("Unable to save contact submission:", error);
-      alert("Unable to save your message in this browser. Please try again.");
+      console.error("Unable to send contact submission:", error);
+      alert(error.message || "Unable to send your message. Please try again.");
+    } finally {
+      if (submitBtn) submitBtn.disabled = false;
     }
   });
 });

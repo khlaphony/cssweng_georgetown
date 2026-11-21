@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -8,86 +8,92 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/contact.css">
 </head>
 <body>
 
   <!-- Top Navigation Bar -->
   <header class="navbar">
-    <a href="index.html" class="logo-container" aria-label="Georgetown Electrical Systems">
-      <img src="assets/logo.png" alt="Georgetown Electrical Systems Logo" class="logo">
-    </a>
-    <nav class="nav-links" aria-label="Main Navigation">
-      <a href="index.html" class="nav-item">Home</a>
-      <a href="products.html" class="nav-item">Products</a>
-      <a href="services.html" class="nav-item">Services</a>
-      <a href="contactus.html" class="nav-item active">Contact Us</a>
-      <a href="apply.html" class="nav-item">Apply Here</a>
-    </nav>
+    <div class="nav-inner">
+      <a href="index.html" class="logo" aria-label="Georgetown Electrical Systems">
+        <img src="assets/logo.png" alt="Georgetown Electrical Systems Logo" class="logo-img">
+      </a>
+      <nav aria-label="Main Navigation">
+        <ul class="nav-links">
+          <li><a href="index.html" class="nav-link">Home</a></li>
+          <li><a href="products.html" class="nav-link">Products</a></li>
+          <li><a href="services.html" class="nav-link">Services</a></li>
+          <li><a href="contactus.html" class="nav-link active">Contact Us</a></li>
+          <li><a href="apply.html" class="nav-link">Apply Here</a></li>
+        </ul>
+      </nav>
+    </div>
   </header>
 
-  <!-- Hero with Frosted Glass Contact Form -->
-  <main class="hero-container">
-    <div class="hero-overlay">
-      <!-- Left Hero Pitch -->
-      <div class="hero-content">
-        <h1 class="hero-title">
-          Empowering<br>
-          the Philippine<br>
-          Electricity<br>
-          Market
-        </h1>
+  <main class="contact-page">
+    <section class="contact-intro">
+      <span class="contact-kicker">CONTACT OUR TEAM</span>
+      <h1>Let’s talk about your project</h1>
+      <p>Complete the form and our team will direct your enquiry to the right person.</p>
+      <div class="contact-details">
+        <a href="tel:+63281234567"><span aria-hidden="true">Tel</span> +63 (02) 8123 4567</a>
+        <a href="mailto:info@georgetownelectrical.com"><span aria-hidden="true">Email</span> info@georgetownelectrical.com</a>
       </div>
+    </section>
 
-      <!-- Right Form Card (Glassmorphic) -->
-      <section class="form-card" aria-label="Contact Form">
-          <form id="contact-form" novalidate autocomplete="on">
-            <div class="form-group">
-              <label for="contactName">Contact<span class="req">*</span></label>
-              <div class="input-wrap">
-                <input type="text" id="contactName" name="contactName" placeholder="Enter your full name here" required>
-              </div>
-              <span class="err" id="contactName-error">Please enter your name</span>
-            </div>
+    <section class="form-card contact-form-card" aria-label="Contact Form">
+      <form id="contact-form" novalidate autocomplete="on">
+        <fieldset class="contact-preference">
+          <legend>How would you prefer to contact us?</legend>
+          <div class="preference-options">
+            <label class="preference-option">
+              <input type="radio" name="contactPreference" value="message" checked>
+              <span class="preference-copy"><strong>Send us a message</strong><small>We’ll reply by email or phone.</small></span>
+            </label>
+            <label class="preference-option">
+              <input type="radio" name="contactPreference" value="call">
+              <span class="preference-copy"><strong>Request a call</strong><small>We’ll contact you at your preferred time.</small></span>
+            </label>
+          </div>
+        </fieldset>
 
-            <div class="form-group">
-              <label for="companyName">Company Name</label>
-              <div class="input-wrap">
-                <input type="text" id="companyName" name="companyName" placeholder="Enter your company name here">
-              </div>
-            </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="contactName">Contact name<span class="req">*</span></label>
+            <input type="text" id="contactName" name="contactName" placeholder="Your full name" required>
+            <span class="err" id="contactName-error">Please enter your name</span>
+          </div>
+          <div class="form-group">
+            <label for="companyName">Company name</label>
+            <input type="text" id="companyName" name="companyName" placeholder="Your company">
+          </div>
+        </div>
 
-            <div class="form-group">
-              <label for="email">Email<span class="req">*</span></label>
-              <div class="input-wrap">
-                <input type="email" id="email" name="email" placeholder="Enter your email address here" required>
-              </div>
-              <span class="err" id="email-error">Please enter a valid email address</span>
-            </div>
+        <div class="form-group">
+          <label for="email">Email<span class="req">*</span></label>
+          <input type="email" id="email" name="email" placeholder="name@company.com" required>
+          <span class="err" id="email-error">Please enter a valid email address</span>
+        </div>
 
-            <div class="form-group">
-              <label for="mobileNumber">Mobile Number (preferably w/ Viber)<span class="req">*</span></label>
-              <div class="input-wrap">
-                <input type="tel" id="mobileNumber" name="mobileNumber" placeholder="Enter your mobile number here" required>
-              </div>
-              <span class="err" id="mobileNumber-error">Please enter your mobile number</span>
-            </div>
+        <div class="form-group">
+          <label for="mobileNumber">Mobile number<span class="req">*</span></label>
+          <input type="tel" id="mobileNumber" name="mobileNumber" placeholder="+63 900 000 0000" required>
+          <span class="err" id="mobileNumber-error">Please enter your mobile number</span>
+        </div>
 
-            <div class="form-group">
-              <label for="message">Message<span class="req">*</span></label>
-              <div class="input-wrap">
-                <textarea id="message" name="message" placeholder="Enter your message here..." required rows="3"></textarea>
-              </div>
-              <span class="err" id="message-error">Please enter a message</span>
-            </div>
+        <div class="form-group">
+          <label for="message">Message<span class="req">*</span></label>
+          <textarea id="message" name="message" placeholder="Tell us briefly how we can help" required rows="5"></textarea>
+          <span class="err" id="message-error">Please enter a message</span>
+        </div>
 
-            <button type="submit" id="btn-submit" class="btn-primary">
-              <span class="btn-text">Submit</span>
-              <span class="btn-arrow">→</span>
-            </button>
-          </form>
-      </section>
-    </div>
+        <button type="submit" id="btn-submit">
+          <span class="btn-text">Send message</span>
+          <span class="btn-arrow">→</span>
+        </button>
+        <p class="form-note"><span aria-hidden="true">*</span> Required fields</p>
+      </form>
+    </section>
   </main>
 
   <!-- Notification Toast Container -->

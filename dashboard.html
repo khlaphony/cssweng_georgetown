@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard | Georgetown Electrical Systems</title>
+    <meta name="description" content="Admin dashboard for managing job applications" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/services.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <header class="navbar">
+        <div class="nav-inner">
+            <a href="index.html" class="logo" aria-label="Georgetown Electrical Systems">
+                <img src="assets/logo.png" alt="Georgetown Electrical Systems Logo" class="logo-img">
+            </a>
+            <nav aria-label="Main Navigation">
+                <ul class="nav-links">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="products.html" class="nav-link">Products</a></li>
+                    <li><a href="services.html" class="nav-link">Services</a></li>
+                    <li><a href="contactus.html" class="nav-link">Contact Us</a></li>
+                    <li><a href="apply.html" class="nav-link">Apply Here</a></li>
+                    <li><a href="dashboard.html" class="nav-link active">Dashboard</a></li>
+                    <li><button type="button" id="logoutBtn" class="nav-link logout-btn">Log out</button></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="dashboard">
+
+        <div class="dash-heading">
+            <h1>Applications</h1>
+            <p id="dash-message" role="status" aria-live="polite"></p>
+        </div>
+
+        <!-- Summary -->
+        <section class="dash-summary" aria-label="Summary">
+            <div class="summary-item">
+                <span class="summary-value" id="stat-total">&ndash;</span>
+                <span class="summary-label">Total applications</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-value" id="stat-latest">&ndash;</span>
+                <span class="summary-label">Latest application</span>
+            </div>
+            <div class="summary-item summary-status">
+                <span class="summary-value" id="stat-status">&ndash;</span>
+                <span class="summary-label">Accepting applications?</span>
+                <button type="button" id="toggleStatusBtn" class="dash-btn" disabled>Close Applications</button>
+            </div>
+        </section>
+
+        <!-- Applications table -->
+        <section aria-label="Application list">
+            <div class="table-wrap">
+                <table class="app-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Position</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Mobile</th>
+                            <th scope="col">Submitted</th>
+                            <th scope="col">Files</th>
+                            <th scope="col">Message</th>
+                            <th scope="col"><span class="sr-only">Actions</span></th>
+                        </tr>
+                    </thead>
+                    <tbody id="appRows">
+                        <tr>
+                            <td colspan="8" class="table-empty">Loading applications...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="svc-footer">
+        <p>&copy; <span id="year">2026</span> Georgetown Electrical Systems. All rights reserved.</p>
+    </footer>
+
+    <script src="js/dashboard.js"></script>
+</body>
+
+</html>
