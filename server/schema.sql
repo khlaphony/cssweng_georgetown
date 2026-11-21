@@ -46,3 +46,8 @@ CREATE TABLE IF NOT EXISTS product_inquiries (
   created_at    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
   INDEX idx_inq_created (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS settings (
+  setting_key   VARCHAR(50)  PRIMARY KEY,
+  setting_value VARCHAR(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

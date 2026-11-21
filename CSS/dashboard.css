@@ -176,3 +176,46 @@
     clip: rect(0 0 0 0);
     white-space: nowrap;
 }
+/* Section switcher */
+.dash-tabs {
+    display: inline-flex;
+    gap: 0.25rem;
+    margin: 0.75rem 0 0.5rem;
+    padding: 0.25rem;
+    background: var(--dash-surface);
+    border: 1px solid var(--dash-border);
+    border-radius: 9999px;
+}
+
+.dash-tab {
+    padding: 0.5rem 1.1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--dash-muted);
+    background: transparent;
+    border: none;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.dash-tab:hover {
+    color: var(--color-primary-hover);
+}
+
+.dash-tab.active {
+    color: #fff;
+    background: var(--color-primary);
+}
+
+.dash-tab:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+.message-cell {
+    min-width: 240px;
+    max-width: 420px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}

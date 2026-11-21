@@ -872,6 +872,31 @@ body {
   box-shadow: 0 10px 22px rgba(230, 74, 25, 0.3);
 }
 
+.contact-form-card .err {
+  color: #b91c1c;
+  background: #fee2e2;
+  border-color: #fecaca;
+  backdrop-filter: none;
+}
+
+.form-message {
+  margin-bottom: 18px;
+  padding: 11px 14px;
+  border-radius: 12px;
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.form-message.error {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.form-message.success {
+  background: #dcfce7;
+  color: #15803d;
+}
+
 @media (max-width: 620px) {
   .contact-page {
     padding: 38px 16px 56px;

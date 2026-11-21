@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Products | Georgetown Electrical Systems</title>
   <meta name="description" content="Electrical equipment and materials supplied by Georgetown Electrical Systems, Philippines." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/products.css" />
 </head>
@@ -156,6 +159,7 @@
             <div class="prd-field">
               <label for="companyName">Company name</label>
               <input type="text" id="companyName" name="companyName" placeholder="Your company">
+              <span class="prd-err" id="companyName-error">Company name must be 150 characters or fewer</span>
             </div>
           </div>
 
@@ -168,12 +172,15 @@
             <div class="prd-field">
               <label for="mobileNumber">Mobile number<span class="prd-req">*</span></label>
               <input type="tel" id="mobileNumber" name="mobileNumber" placeholder="+63 900 000 0000" required>
-              <span class="prd-err" id="mobileNumber-error">Please enter a valid mobile number</span>
+              <span class="prd-err" id="mobileNumber-error">Please enter a valid Philippine mobile number (e.g. +63 900 000 0000 or 0900 000 0000)</span>
             </div>
           </div>
 
           <div class="prd-actions">
-            <button type="submit" class="prd-submit">Submit your inquiry</button>
+            <button type="submit" class="prd-submit">
+              <span class="btn-text">Submit your inquiry</span>
+              <span class="btn-arrow" aria-hidden="true">&rarr;</span>
+            </button>
           </div>
           <p class="prd-status" id="inquiry-status" role="status" aria-live="polite"></p>
         </form>

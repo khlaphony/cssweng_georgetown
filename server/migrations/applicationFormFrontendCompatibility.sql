@@ -11,4 +11,7 @@ ALTER TABLE applications
   MODIFY COLUMN soft_skills        TEXT NULL,
   MODIFY COLUMN hard_skills        TEXT NULL;
 
-DROP TABLE IF EXISTS settings;
+CREATE TABLE IF NOT EXISTS settings (
+  setting_key   VARCHAR(50)  PRIMARY KEY,
+  setting_value VARCHAR(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

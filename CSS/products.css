@@ -17,10 +17,13 @@ body {
 .prd-eyebrow {
   display: inline-block;
   background: var(--color-accent-light);
-  color: var(--color-primary);
-  font-weight: 600;
-  font-size: 0.85rem;
-  padding: 0.35rem 1rem;
+  color: #E64A19;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 0.4rem 1rem;
   border-radius: 9999px;
   margin-bottom: 1rem;
 }
@@ -174,6 +177,7 @@ body {
 
 .prd-field label {
   color: var(--color-text-dark);
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-size: 0.875rem;
   font-weight: 600;
   margin-bottom: 0.35rem;
@@ -227,21 +231,50 @@ body {
   margin-top: 1.25rem;
 }
 
-/* Submit button: transparent with a gray outline */
 .prd-submit {
-  padding: 0.6rem 1.4rem;
-  border: 1px solid #A1A1AA;
-  border-radius: 9999px;
-  background: transparent;
-  color: var(--color-text-muted);
-  font-size: 0.9rem;
-  font-weight: 600;
+  width: 100%;
+  padding: 13px 24px;
+  border: none;
+  border-radius: 12px;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 0.98rem;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  color: #FFFFFF;
+  background: #E64A19;
   cursor: pointer;
-  transition: background 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 8px 18px rgba(230, 74, 25, 0.24);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.prd-submit .btn-arrow {
+  transition: transform 0.25s ease;
 }
 
 .prd-submit:hover {
-  background: #F4F4F5;
+  transform: translateY(-2px);
+  background: #D84315;
+  box-shadow: 0 10px 22px rgba(230, 74, 25, 0.3);
+}
+
+.prd-submit:hover .btn-arrow {
+  transform: translateX(4px);
+}
+
+.prd-submit:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(230, 74, 25, 0.4);
+}
+
+.prd-submit:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .prd-submit:focus-visible {
@@ -255,6 +288,16 @@ body {
   margin-top: 1rem;
   min-height: 1.4em;
   color: var(--color-text-dark);
+}
+
+.prd-status.success {
+  color: #15803D;
+  font-weight: 600;
+}
+
+.prd-status.error {
+  color: #B91C1C;
+  font-weight: 600;
 }
 
 /* --- FOOTER --- */

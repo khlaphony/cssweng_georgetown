@@ -3,7 +3,11 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+h1, h2, h3 {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 :root {
@@ -324,6 +328,55 @@ body {
 .hero-cta-group .btn-secondary:hover {
   background: var(--glass-bg);
   border-color: var(--color-text-light);
+}
+
+.form-message {
+  margin-bottom: 1rem;
+  padding: 0.65rem 0.9rem;
+  border-radius: var(--input-radius);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.form-message.error {
+  background: #FEE2E2;
+  color: #B91C1C;
+}
+
+.form-message.success {
+  background: #DCFCE7;
+  color: #15803D;
+}
+
+.field-error {
+  margin-top: 0.3rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #FECACA;
+}
+
+.field-error:empty {
+  display: none;
+}
+
+@media (max-width: 580px) {
+  .nav-inner {
+    padding: 0 18px;
+    height: 64px;
+  }
+
+  .logo-img {
+    height: 40px;
+  }
+
+  .nav-links {
+    gap: 4px;
+  }
+
+  .nav-link {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
 }
 
 @media (max-width: 768px) {

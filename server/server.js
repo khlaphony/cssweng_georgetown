@@ -47,18 +47,49 @@ app.get('/dashboard.html', (req, res) => {
 // ---------- Helpers ----------
 const emailOk = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 const clean = (v) => (typeof v === 'string' ? v.trim() : '');
+const MOBILE_REGEX = /^(\+63|0)\s?9\d{2}\s?\d{3}\s?\d{4}$/;
+
+function readContactFields(body, withMessage) {
+  const b = body || {};
+  const fields = {
+    contactName: clean(b.contactName),
+    companyName: clean(b.companyName),
+    email: clean(b.email),
+    mobileNumber: clean(b.mobileNumber),
+    message: withMessage ? clean(b.message) : '',
+  };
+  const errors = {};
+
+  if (!fields.contactName) errors.contactName = 'Please enter your name.';
+  else if (fields.contactName.length > 150) errors.contactName = 'Name must be 150 characters or fewer.';
+
+  if (fields.companyName.length > 150) errors.companyName = 'Company name must be 150 characters or fewer.';
+
+  if (!emailOk(fields.email) || fields.email.length > 255) errors.email = 'Please enter a valid email address.';
+
+  if (!MOBILE_REGEX.test(fields.mobileNumber)) {
+    errors.mobileNumber = 'Please enter a valid Philippine mobile number (e.g. +63 900 000 0000 or 0900 000 0000).';
+  }
+
+  if (withMessage) {
+    if (!fields.message) errors.message = 'Please enter a message.';
+    else if (fields.message.length > 2000) errors.message = 'Message must be 2000 characters or fewer.';
+  }
+
+  return { fields, errors };
+}
+
+function sendFieldErrors(res, errors) {
+  return res.status(400).json({ ok: false, error: Object.values(errors)[0], errors });
+}
 
 // ---------- Contact form ----------
 app.post('/api/contact', async (req, res) => {
-  const contactName = clean(req.body.contactName);
-  const companyName = clean(req.body.companyName) || null;
-  const email = clean(req.body.email);
-  const mobileNumber = clean(req.body.mobileNumber);
-  const message = clean(req.body.message);
+  const { fields, errors } = readContactFields(req.body, true);
+  if (Object.keys(errors).length > 0) return sendFieldErrors(res, errors);
 
-  if (!contactName || !emailOk(email) || !mobileNumber || !message) {
-    return res.status(400).json({ error: 'Please fill in all required fields.' });
-  }
+  const { contactName, email, mobileNumber, message } = fields;
+  const companyName = fields.companyName || null;
 
   try {
     await pool.execute(
@@ -76,14 +107,11 @@ app.post('/api/contact', async (req, res) => {
 
 // ---------- Product inquiry form ----------
 app.post('/api/inquiry', async (req, res) => {
-  const contactName = clean(req.body.contactName);
-  const companyName = clean(req.body.companyName) || null;
-  const email = clean(req.body.email);
-  const mobileNumber = clean(req.body.mobileNumber);
+  const { fields, errors } = readContactFields(req.body, false);
+  if (Object.keys(errors).length > 0) return sendFieldErrors(res, errors);
 
-  if (!contactName || !emailOk(email) || !/^\+?[\d\s()-]{7,}$/.test(mobileNumber)) {
-    return res.status(400).json({ error: 'Please fill in all required fields.' });
-  }
+  const { contactName, email, mobileNumber } = fields;
+  const companyName = fields.companyName || null;
 
   try {
     await pool.execute(

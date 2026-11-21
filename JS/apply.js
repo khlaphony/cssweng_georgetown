@@ -2,6 +2,10 @@
 const API_URL = '/api/applications';
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const DOC_EXTENSIONS = ['pdf', 'doc', 'docx', 'png', 'jpg', 'jpeg'];
+const POSITIONS = ['electrical-engineer', 'field-technician', 'project-manager', 'administrative-staff'];
+const MOBILE_REGEX = /^(\+63|0)\s?9\d{2}\s?\d{3}\s?\d{4}$/;
+const NAME_REGEX = /^[\p{L}\p{M}'.\- ]+$/u;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const form = document.getElementById('applyForm');
 const submitBtn = form.querySelector('.submit-btn');
@@ -53,6 +57,31 @@ function validateFile(file, label, allowed) {
 
 function validateClient() {
   const errors = {};
+  const value = (name) => (form.elements[name].value || '').trim();
+
+  const fullName = value('fullName');
+  if (fullName.length < 2 || fullName.length > 100) {
+    errors.fullName = 'Full name must be 2 to 100 characters.';
+  } else if (!NAME_REGEX.test(fullName)) {
+    errors.fullName = 'Full name can only contain letters, spaces, periods, apostrophes and hyphens.';
+  }
+
+  const email = value('email');
+  if (!EMAIL_REGEX.test(email) || email.length > 255) {
+    errors.email = 'Please enter a valid email address.';
+  }
+
+  if (!MOBILE_REGEX.test(value('mobile'))) {
+    errors.mobile = 'Please enter a valid Philippine mobile number (e.g. +63 900 000 0000 or 0900 000 0000).';
+  }
+
+  if (!POSITIONS.includes(value('position'))) {
+    errors.position = 'Please select a position.';
+  }
+
+  if (value('message').length > 1000) {
+    errors.message = 'Message must be 1000 characters or fewer.';
+  }
 
   Object.entries(FILE_FIELDS).forEach(([name, rule]) => {
     const error = validateFile(form.elements[name].files[0], rule.label, rule.exts);
@@ -61,6 +90,14 @@ function validateClient() {
 
   return errors;
 }
+
+form.querySelectorAll('input, select, textarea').forEach((field) => {
+  const eventName = field.type === 'file' || field.tagName === 'SELECT' ? 'change' : 'input';
+  field.addEventListener(eventName, () => {
+    const el = document.getElementById(`${field.name}Error`);
+    if (el) el.textContent = '';
+  });
+});
 
 // submission
 form.addEventListener('submit', async (event) => {
@@ -72,7 +109,8 @@ form.addEventListener('submit', async (event) => {
   const clientErrors = validateClient();
   if (Object.keys(clientErrors).length > 0) {
     showFieldErrors(clientErrors);
-    showMessage('error', 'Please fix the highlighted fields.');
+    showMessage('error', 'Please fix the fields marked below.');
+    form.elements[Object.keys(clientErrors)[0]].focus();
     return;
   }
 

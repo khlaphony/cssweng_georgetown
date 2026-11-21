@@ -4,6 +4,10 @@
 //   DELETE /api/admin/applications/:id
 //   GET    /api/admin/applications/status   -> { open: true | false }
 //   POST   /api/admin/applications/status   body: { open: true | false }
+//   GET    /api/admin/contact-messages      -> [ { id, contactName, companyName, email, mobileNumber, message, createdAt }, ... ]
+//   DELETE /api/admin/contact-messages/:id
+//   GET    /api/admin/product-inquiries     -> [ { id, contactName, companyName, email, mobileNumber, createdAt }, ... ]
+//   DELETE /api/admin/product-inquiries/:id
 //   POST   /api/logout
 
 const rowsEl = document.getElementById('appRows');
@@ -13,6 +17,20 @@ const latestEl = document.getElementById('stat-latest');
 const statusEl = document.getElementById('stat-status');
 const toggleBtn = document.getElementById('toggleStatusBtn');
 const logoutBtn = document.getElementById('logoutBtn');
+const titleEl = document.getElementById('dash-title');
+const contactRowsEl = document.getElementById('contactRows');
+const contactTotalEl = document.getElementById('contact-total');
+const contactLatestEl = document.getElementById('contact-latest');
+const inquiryRowsEl = document.getElementById('inquiryRows');
+const inquiryTotalEl = document.getElementById('inquiry-total');
+const inquiryLatestEl = document.getElementById('inquiry-latest');
+const tabs = document.querySelectorAll('.dash-tab');
+
+const VIEWS = {
+  applications: { title: 'Applications', panel: document.getElementById('view-applications') },
+  contacts: { title: 'Contact Requests', panel: document.getElementById('view-contacts') },
+  inquiries: { title: 'Product Inquiries', panel: document.getElementById('view-inquiries') },
+};
 
 let applicationsOpen = null;
 
@@ -42,6 +60,25 @@ function fileHref(value) {
   if (!value) return '';
   if (/^(https?:)?\/\//.test(value) || value.startsWith('/')) return value;
   return '/uploads/' + value; // adjust if your server serves uploads elsewhere
+}
+
+function emptyRow(tbody, colSpan, text, isError = false) {
+  tbody.innerHTML = '';
+  const tr = document.createElement('tr');
+  const td = document.createElement('td');
+  td.colSpan = colSpan;
+  td.className = isError ? 'table-empty dash-error' : 'table-empty';
+  td.textContent = text;
+  tr.appendChild(td);
+  tbody.appendChild(tr);
+}
+
+function newestDate(items) {
+  const newest = items
+    .map(item => new Date(pick(item, 'createdAt', 'created_at')))
+    .filter(d => !isNaN(d))
+    .sort((a, b) => b - a)[0];
+  return newest ? formatDate(newest) : '\u2013';
 }
 
 function makeCell(text) {
@@ -140,7 +177,119 @@ function renderApplications(applications) {
   });
 }
 
+function renderContacts(contacts) {
+  contactTotalEl.textContent = contacts.length;
+  contactLatestEl.textContent = newestDate(contacts);
+
+  if (contacts.length === 0) {
+    emptyRow(contactRowsEl, 7, 'No contact requests yet. Messages from the Contact Us page will appear here.');
+    return;
+  }
+
+  contactRowsEl.innerHTML = '';
+  contacts.forEach(contact => {
+    const id = pick(contact, 'id');
+    const name = pick(contact, 'contactName', 'contact_name');
+    const tr = document.createElement('tr');
+
+    tr.appendChild(makeCell(name));
+    tr.appendChild(makeCell(pick(contact, 'companyName', 'company_name')));
+    tr.appendChild(makeCell(pick(contact, 'email')));
+    tr.appendChild(makeCell(pick(contact, 'mobileNumber', 'mobile_number')));
+    tr.appendChild(makeCell(formatDate(pick(contact, 'createdAt', 'created_at'))));
+
+    const msgTd = makeCell(pick(contact, 'message'));
+    msgTd.className = 'message-cell';
+    tr.appendChild(msgTd);
+
+    const actionTd = document.createElement('td');
+    const delBtn = document.createElement('button');
+    delBtn.type = 'button';
+    delBtn.className = 'dash-btn dash-btn-danger';
+    delBtn.textContent = 'Delete';
+    delBtn.setAttribute('aria-label', 'Delete contact request from ' + (name || 'sender'));
+    delBtn.addEventListener('click', () => deleteContact(id, name));
+    actionTd.appendChild(delBtn);
+    tr.appendChild(actionTd);
+
+    contactRowsEl.appendChild(tr);
+  });
+}
+
+function renderInquiries(inquiries) {
+  inquiryTotalEl.textContent = inquiries.length;
+  inquiryLatestEl.textContent = newestDate(inquiries);
+
+  if (inquiries.length === 0) {
+    emptyRow(inquiryRowsEl, 6, 'No product inquiries yet. Inquiries from the Products page will appear here.');
+    return;
+  }
+
+  inquiryRowsEl.innerHTML = '';
+  inquiries.forEach(inquiry => {
+    const id = pick(inquiry, 'id');
+    const name = pick(inquiry, 'contactName', 'contact_name');
+    const tr = document.createElement('tr');
+
+    tr.appendChild(makeCell(name));
+    tr.appendChild(makeCell(pick(inquiry, 'companyName', 'company_name')));
+    tr.appendChild(makeCell(pick(inquiry, 'email')));
+    tr.appendChild(makeCell(pick(inquiry, 'mobileNumber', 'mobile_number')));
+    tr.appendChild(makeCell(formatDate(pick(inquiry, 'createdAt', 'created_at'))));
+
+    const actionTd = document.createElement('td');
+    const delBtn = document.createElement('button');
+    delBtn.type = 'button';
+    delBtn.className = 'dash-btn dash-btn-danger';
+    delBtn.textContent = 'Delete';
+    delBtn.setAttribute('aria-label', 'Delete product inquiry from ' + (name || 'sender'));
+    delBtn.addEventListener('click', () => deleteInquiry(id, name));
+    actionTd.appendChild(delBtn);
+    tr.appendChild(actionTd);
+
+    inquiryRowsEl.appendChild(tr);
+  });
+}
+
 /* ---------- actions ---------- */
+
+function showView(name) {
+  if (!VIEWS[name]) name = 'applications';
+  Object.entries(VIEWS).forEach(([key, view]) => { view.panel.hidden = key !== name; });
+  tabs.forEach(tab => {
+    const active = tab.dataset.view === name;
+    tab.classList.toggle('active', active);
+    tab.setAttribute('aria-selected', String(active));
+  });
+  titleEl.textContent = VIEWS[name].title;
+  messageEl.textContent = '';
+  history.replaceState(null, '', name === 'applications' ? location.pathname : '#' + name);
+}
+
+async function loadContacts() {
+  try {
+    const res = await api('/api/admin/contact-messages');
+    if (!res.ok) throw new Error('Request failed');
+    const data = await res.json();
+    renderContacts(Array.isArray(data) ? data : (data.messages || []));
+  } catch (err) {
+    if (err.message === 'Not logged in') return;
+    emptyRow(contactRowsEl, 7, 'Could not load contact requests. Refresh the page or try again later.', true);
+  }
+}
+
+async function deleteContact(id, name) {
+  if (!confirm('Delete the contact request from ' + (name || 'this sender') + '? This cannot be undone.')) return;
+  try {
+    const res = await api('/api/admin/contact-messages/' + encodeURIComponent(id), { method: 'DELETE' });
+    if (!res.ok) throw new Error('Request failed');
+    showMessage('Contact request deleted.');
+    loadContacts();
+  } catch (err) {
+    if (err.message === 'Not logged in') return;
+    showMessage('Could not delete the contact request. Please try again.', true);
+  }
+}
 
 async function loadApplications() {
   try {
@@ -207,6 +356,31 @@ async function toggleStatus() {
   }
 }
 
+async function loadInquiries() {
+  try {
+    const res = await api('/api/admin/product-inquiries');
+    if (!res.ok) throw new Error('Request failed');
+    const data = await res.json();
+    renderInquiries(Array.isArray(data) ? data : (data.inquiries || []));
+  } catch (err) {
+    if (err.message === 'Not logged in') return;
+    emptyRow(inquiryRowsEl, 6, 'Could not load product inquiries. Refresh the page or try again later.', true);
+  }
+}
+
+async function deleteInquiry(id, name) {
+  if (!confirm('Delete the product inquiry from ' + (name || 'this sender') + '? This cannot be undone.')) return;
+  try {
+    const res = await api('/api/admin/product-inquiries/' + encodeURIComponent(id), { method: 'DELETE' });
+    if (!res.ok) throw new Error('Request failed');
+    showMessage('Product inquiry deleted.');
+    loadInquiries();
+  } catch (err) {
+    if (err.message === 'Not logged in') return;
+    showMessage('Could not delete the product inquiry. Please try again.', true);
+  }
+}
+
 async function logout() {
   try {
     await fetch('/api/logout', { method: 'POST', credentials: 'same-origin' });
@@ -219,6 +393,10 @@ async function logout() {
 
 toggleBtn.addEventListener('click', toggleStatus);
 logoutBtn.addEventListener('click', logout);
+tabs.forEach(tab => tab.addEventListener('click', () => showView(tab.dataset.view)));
 
+showView(location.hash.slice(1));
 loadStatus();
 loadApplications();
+loadContacts();
+loadInquiries();

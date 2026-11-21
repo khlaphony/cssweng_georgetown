@@ -110,6 +110,77 @@ router.delete('/admin/applications/:id', async (req, res) => {
   }
 });
 
+// List contact form messages
+router.get('/admin/contact-messages', async (req, res) => {
+  try {
+    const [rows] = await pool.execute(
+      `SELECT id,
+              contact_name  AS contactName,
+              company_name  AS companyName,
+              email,
+              mobile_number AS mobileNumber,
+              message,
+              created_at    AS createdAt
+       FROM contact_messages
+       ORDER BY created_at DESC`
+    );
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ ok: false, message: 'Server error.' });
+  }
+});
+
+// Delete a contact form message
+router.delete('/admin/contact-messages/:id', async (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id)) return res.status(400).json({ ok: false, message: 'Invalid id.' });
+
+  try {
+    const [result] = await pool.execute('DELETE FROM contact_messages WHERE id = ?', [id]);
+    if (result.affectedRows === 0) return res.status(404).json({ ok: false, message: 'Not found.' });
+    res.json({ ok: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ ok: false, message: 'Server error.' });
+  }
+});
+
+// List product inquiries
+router.get('/admin/product-inquiries', async (req, res) => {
+  try {
+    const [rows] = await pool.execute(
+      `SELECT id,
+              contact_name  AS contactName,
+              company_name  AS companyName,
+              email,
+              mobile_number AS mobileNumber,
+              created_at    AS createdAt
+       FROM product_inquiries
+       ORDER BY created_at DESC`
+    );
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ ok: false, message: 'Server error.' });
+  }
+});
+
+// Delete a product inquiry
+router.delete('/admin/product-inquiries/:id', async (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id)) return res.status(400).json({ ok: false, message: 'Invalid id.' });
+
+  try {
+    const [result] = await pool.execute('DELETE FROM product_inquiries WHERE id = ?', [id]);
+    if (result.affectedRows === 0) return res.status(404).json({ ok: false, message: 'Not found.' });
+    res.json({ ok: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ ok: false, message: 'Server error.' });
+  }
+});
+
 // Open / closed status
 router.get('/admin/applications/status', async (req, res) => {
   try {

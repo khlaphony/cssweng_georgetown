@@ -40,7 +40,7 @@
 
       <!-- Right Side Glassmorphism Form Card -->
       <div class="form-card">
-        <form id="applyForm" action="#" method="POST" enctype="multipart/form-data">
+        <form id="applyForm" action="#" method="POST" enctype="multipart/form-data" novalidate>
           
           <div class="form-group">
             <label for="fullName">Full Name *</label>
@@ -51,6 +51,7 @@
               placeholder="Enter your full name here" 
               required 
             />
+            <span class="field-error" id="fullNameError"></span>
           </div>
 
           <div class="form-group">
@@ -62,6 +63,7 @@
               placeholder="name@company.com" 
               required 
             />
+            <span class="field-error" id="emailError"></span>
           </div>
 
           <div class="form-group">
@@ -73,6 +75,7 @@
               placeholder="+63 900 000 0000" 
               required 
             />
+            <span class="field-error" id="mobileError"></span>
           </div>
 
           <div class="form-group">
@@ -84,6 +87,7 @@
               <option value="project-manager">Project Manager</option>
               <option value="administrative-staff">Administrative Staff</option>
             </select>
+            <span class="field-error" id="positionError"></span>
           </div>
 
           <div class="form-group">
@@ -95,11 +99,13 @@
               accept=".pdf,.doc,.docx" 
               required 
             />
+            <span class="field-error" id="resumeError"></span>
           </div>
 
             <div class="form-group">
               <label for="citizenship">Proof of Citizenship *</label>
-              <input type="file" id="citizenship" name="citizenship" accept=".pdf,.doc,.docx,.jpeg" required />
+              <input type="file" id="citizenship" name="citizenship" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" required />
+              <span class="field-error" id="citizenshipError"></span>
             </div>
 
           <div class="form-group">
@@ -110,6 +116,7 @@
               rows="3" 
               placeholder="Enter your message here..."
             ></textarea>
+            <span class="field-error" id="messageError"></span>
           </div>
           
           <button type="submit" class="submit-btn apply-submit">
@@ -123,7 +130,6 @@
     </div>
   </main>
 
-  <script src="js/main.js"></script>
   <script src="js/apply.js"></script>
 </body>
 </html>

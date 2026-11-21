@@ -7,13 +7,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Required fields and how each one is validated
   const rules = {
-    contactName: (v) => v.length > 0,
-    email: (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
-    mobileNumber: (v) => /^\+?[\d\s()-]{7,}$/.test(v),
+    contactName: (v) => v.length > 0 && v.length <= 150,
+    companyName: (v) => v.length <= 150,
+    email: (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) && v.length <= 255,
+    mobileNumber: (v) => /^(\+63|0)\s?9\d{2}\s?\d{3}\s?\d{4}$/.test(v),
   };
 
   const setInvalid = (id, isInvalid) => {
     document.getElementById(id).closest(".prd-field").classList.toggle("invalid", isInvalid);
+  };
+
+  const setStatus = (type, text) => {
+    status.className = type ? `prd-status ${type}` : "prd-status";
+    status.textContent = text;
   };
 
   // Clear an error as soon as the person starts fixing the field
@@ -23,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    status.textContent = "";
+    setStatus("", "");
 
     const values = Object.fromEntries(new FormData(form).entries());
     const invalidIds = Object.keys(rules).filter((id) => !rules[id]((values[id] || "").trim()));
@@ -31,6 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
     Object.keys(rules).forEach((id) => setInvalid(id, invalidIds.includes(id)));
 
     if (invalidIds.length) {
+      setStatus("error", "Please fix the fields marked above.");
       document.getElementById(invalidIds[0]).focus();
       return;
     }
@@ -52,15 +59,19 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.error || "Something went wrong.");
+        const result = await res.json().catch(() => ({}));
+        Object.keys(result.errors || {}).forEach((id) => {
+          if (rules[id]) setInvalid(id, true);
+        });
+        setStatus("error", result.error || "We couldn't send your inquiry. Please try again.");
+        return;
       }
 
-      status.textContent = "Thank you! We received your inquiry and will be in touch.";
+      setStatus("success", "Thank you! We received your inquiry and will be in touch.");
       form.reset();
     } catch (error) {
       console.error("Unable to send inquiry:", error);
-      status.textContent = "We couldn't send your inquiry. Please try again.";
+      setStatus("error", "Could not reach the server. Please check your connection and try again.");
     } finally {
       if (submitBtn) submitBtn.disabled = false;
     }
