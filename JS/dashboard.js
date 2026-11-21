@@ -7,8 +7,6 @@
 //   POST   /api/admin/applications/status   body: { open: true | false }
 //   GET    /api/admin/contact-messages      -> [ { id, contactName, companyName, email, mobileNumber, message, createdAt }, ... ]
 //   DELETE /api/admin/contact-messages/:id
-//   GET    /api/admin/product-inquiries     -> [ { id, contactName, companyName, email, mobileNumber, createdAt }, ... ]
-//   DELETE /api/admin/product-inquiries/:id
 //   POST   /api/logout
 
 const rowsEl = document.getElementById('appRows');
@@ -22,15 +20,11 @@ const titleEl = document.getElementById('dash-title');
 const contactRowsEl = document.getElementById('contactRows');
 const contactTotalEl = document.getElementById('contact-total');
 const contactLatestEl = document.getElementById('contact-latest');
-const inquiryRowsEl = document.getElementById('inquiryRows');
-const inquiryTotalEl = document.getElementById('inquiry-total');
-const inquiryLatestEl = document.getElementById('inquiry-latest');
 const tabs = document.querySelectorAll('.dash-tab');
 
 const VIEWS = {
   applications: { title: 'Applications', panel: document.getElementById('view-applications') },
   contacts: { title: 'Contact Requests', panel: document.getElementById('view-contacts') },
-  inquiries: { title: 'Product Inquiries', panel: document.getElementById('view-inquiries') },
 };
 
 let applicationsOpen = null;
@@ -256,41 +250,6 @@ function renderContacts(contacts) {
   });
 }
 
-function renderInquiries(inquiries) {
-  inquiryTotalEl.textContent = inquiries.length;
-  inquiryLatestEl.textContent = newestDate(inquiries);
-
-  if (inquiries.length === 0) {
-    emptyRow(inquiryRowsEl, 6, 'No product inquiries yet. Inquiries from the Products page will appear here.');
-    return;
-  }
-
-  inquiryRowsEl.innerHTML = '';
-  inquiries.forEach(inquiry => {
-    const id = pick(inquiry, 'id');
-    const name = pick(inquiry, 'contactName', 'contact_name');
-    const tr = document.createElement('tr');
-
-    tr.appendChild(makeCell(name));
-    tr.appendChild(makeCell(pick(inquiry, 'companyName', 'company_name')));
-    tr.appendChild(makeCell(pick(inquiry, 'email')));
-    tr.appendChild(makeCell(pick(inquiry, 'mobileNumber', 'mobile_number')));
-    tr.appendChild(makeCell(formatDate(pick(inquiry, 'createdAt', 'created_at'))));
-
-    const actionTd = document.createElement('td');
-    const delBtn = document.createElement('button');
-    delBtn.type = 'button';
-    delBtn.className = 'dash-btn dash-btn-danger';
-    delBtn.textContent = 'Delete';
-    delBtn.setAttribute('aria-label', 'Delete product inquiry from ' + (name || 'sender'));
-    delBtn.addEventListener('click', () => deleteInquiry(id, name));
-    actionTd.appendChild(delBtn);
-    tr.appendChild(actionTd);
-
-    inquiryRowsEl.appendChild(tr);
-  });
-}
-
 /* ---------- actions ---------- */
 
 function showView(name) {
@@ -396,31 +355,6 @@ async function toggleStatus() {
   }
 }
 
-async function loadInquiries() {
-  try {
-    const res = await api('/api/admin/product-inquiries');
-    if (!res.ok) throw new Error('Request failed');
-    const data = await res.json();
-    renderInquiries(Array.isArray(data) ? data : (data.inquiries || []));
-  } catch (err) {
-    if (err.message === 'Not logged in') return;
-    emptyRow(inquiryRowsEl, 6, 'Could not load product inquiries. Refresh the page or try again later.', true);
-  }
-}
-
-async function deleteInquiry(id, name) {
-  if (!confirm('Delete the product inquiry from ' + (name || 'this sender') + '? This cannot be undone.')) return;
-  try {
-    const res = await api('/api/admin/product-inquiries/' + encodeURIComponent(id), { method: 'DELETE' });
-    if (!res.ok) throw new Error('Request failed');
-    showMessage('Product inquiry deleted.');
-    loadInquiries();
-  } catch (err) {
-    if (err.message === 'Not logged in') return;
-    showMessage('Could not delete the product inquiry. Please try again.', true);
-  }
-}
-
 async function logout() {
   try {
     await fetch('/api/logout', { method: 'POST', credentials: 'same-origin' });
@@ -439,4 +373,3 @@ showView(location.hash.slice(1));
 loadStatus();
 loadApplications();
 loadContacts();
-loadInquiries();

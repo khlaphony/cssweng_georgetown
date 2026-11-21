@@ -15,3 +15,5 @@ CREATE TABLE IF NOT EXISTS settings (
   setting_key   VARCHAR(50)  PRIMARY KEY,
   setting_value VARCHAR(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+DROP TABLE IF EXISTS product_inquiries;

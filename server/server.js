@@ -49,14 +49,14 @@ const emailOk = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 const clean = (v) => (typeof v === 'string' ? v.trim() : '');
 const MOBILE_REGEX = /^(\+63|0)\s?9\d{2}\s?\d{3}\s?\d{4}$/;
 
-function readContactFields(body, withMessage) {
+function readContactFields(body) {
   const b = body || {};
   const fields = {
     contactName: clean(b.contactName),
     companyName: clean(b.companyName),
     email: clean(b.email),
     mobileNumber: clean(b.mobileNumber),
-    message: withMessage ? clean(b.message) : '',
+    message: clean(b.message),
   };
   const errors = {};
 
@@ -71,10 +71,8 @@ function readContactFields(body, withMessage) {
     errors.mobileNumber = 'Please enter a valid Philippine mobile number (e.g. +63 900 000 0000 or 0900 000 0000).';
   }
 
-  if (withMessage) {
-    if (!fields.message) errors.message = 'Please enter a message.';
-    else if (fields.message.length > 2000) errors.message = 'Message must be 2000 characters or fewer.';
-  }
+  if (!fields.message) errors.message = 'Please enter a message.';
+  else if (fields.message.length > 2000) errors.message = 'Message must be 2000 characters or fewer.';
 
   return { fields, errors };
 }
@@ -85,7 +83,7 @@ function sendFieldErrors(res, errors) {
 
 // ---------- Contact form ----------
 app.post('/api/contact', async (req, res) => {
-  const { fields, errors } = readContactFields(req.body, true);
+  const { fields, errors } = readContactFields(req.body);
   if (Object.keys(errors).length > 0) return sendFieldErrors(res, errors);
 
   const { contactName, email, mobileNumber, message } = fields;
@@ -97,27 +95,6 @@ app.post('/api/contact', async (req, res) => {
        (contact_name, company_name, email, mobile_number, message)
        VALUES (?, ?, ?, ?, ?)`,
       [contactName, companyName, email, mobileNumber, message]
-    );
-    res.status(201).json({ ok: true });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Server error. Please try again.' });
-  }
-});
-
-// ---------- Product inquiry form ----------
-app.post('/api/inquiry', async (req, res) => {
-  const { fields, errors } = readContactFields(req.body, false);
-  if (Object.keys(errors).length > 0) return sendFieldErrors(res, errors);
-
-  const { contactName, email, mobileNumber } = fields;
-  const companyName = fields.companyName || null;
-
-  try {
-    await pool.execute(
-      `INSERT INTO product_inquiries (contact_name, company_name, email, mobile_number)
-       VALUES (?, ?, ?, ?)`,
-      [contactName, companyName, email, mobileNumber]
     );
     res.status(201).json({ ok: true });
   } catch (err) {

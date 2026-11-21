@@ -43,7 +43,6 @@
             <div class="dash-tabs" role="tablist" aria-label="Dashboard sections">
                 <button type="button" class="dash-tab active" role="tab" id="tab-applications" aria-controls="view-applications" aria-selected="true" data-view="applications">Applications</button>
                 <button type="button" class="dash-tab" role="tab" id="tab-contacts" aria-controls="view-contacts" aria-selected="false" data-view="contacts">Contact Requests</button>
-                <button type="button" class="dash-tab" role="tab" id="tab-inquiries" aria-controls="view-inquiries" aria-selected="false" data-view="inquiries">Product Inquiries</button>
             </div>
             <p id="dash-message" role="status" aria-live="polite"></p>
         </div>
@@ -125,43 +124,6 @@
                         <tbody id="contactRows">
                             <tr>
                                 <td colspan="7" class="table-empty">Loading contact requests...</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-        </div>
-
-        <div id="view-inquiries" class="dash-view" role="tabpanel" aria-labelledby="tab-inquiries" hidden>
-
-            <section class="dash-summary" aria-label="Product inquiry summary">
-                <div class="summary-item">
-                    <span class="summary-value" id="inquiry-total">&ndash;</span>
-                    <span class="summary-label">Total product inquiries</span>
-                </div>
-                <div class="summary-item">
-                    <span class="summary-value" id="inquiry-latest">&ndash;</span>
-                    <span class="summary-label">Latest inquiry</span>
-                </div>
-            </section>
-
-            <section aria-label="Product inquiry list">
-                <div class="table-wrap">
-                    <table class="app-table">
-                        <thead>
-                            <tr>
-                                <th scope="col">Name</th>
-                                <th scope="col">Company</th>
-                                <th scope="col">Email</th>
-                                <th scope="col">Mobile</th>
-                                <th scope="col">Submitted</th>
-                                <th scope="col"><span class="sr-only">Actions</span></th>
-                            </tr>
-                        </thead>
-                        <tbody id="inquiryRows">
-                            <tr>
-                                <td colspan="6" class="table-empty">Loading product inquiries...</td>
                             </tr>
                         </tbody>
                     </table>

@@ -37,16 +37,6 @@ CREATE TABLE admins (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS product_inquiries (
-  id            INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  contact_name  VARCHAR(150) NOT NULL,
-  company_name  VARCHAR(150) NULL,
-  email         VARCHAR(255) NOT NULL,
-  mobile_number VARCHAR(30)  NOT NULL,
-  created_at    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  INDEX idx_inq_created (created_at)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
 CREATE TABLE IF NOT EXISTS settings (
   setting_key   VARCHAR(50)  PRIMARY KEY,
   setting_value VARCHAR(255) NOT NULL
