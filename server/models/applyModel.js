@@ -1,45 +1,64 @@
-// import db
-const db = require('../server/db');
+// imports
+const path = require('path');
+const db = require('../db');
+const { uploadRoot, safeOriginalName } = require('../middleware/upload');
 
-// email validator: prevents duplication
-async function findDuplicate(email, position) {
-  const sql = 'SELECT id FROM applications WHERE email = ? AND position = ? LIMIT 1';
-
-  const [rows] = await db.execute(sql, [email, position]);
-
-  return rows.length > 0;
+// helper: turn a multer file into the columns we store.
+// path is stored relative to the private upload root, never absolute.
+function fileColumns(file) {
+  return [
+    path.relative(uploadRoot, file.path),
+    safeOriginalName(file.originalname),
+    file.verifiedMime,
+    file.size,
+  ];
 }
 
-// creates application as object instead of separate functions for each field.
-async function createApplication({
-  fullName,
-  email,
-  mobile,
-  position,
-  message,
-  resumePath,
-  citizenshipPath,
-}) {
-  const sql = `
-    INSERT INTO applications
-      (full_name, email, mobile, position, message, resume_path, citizenship_path)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-  `;
+// inserts one application inside a transaction.
+// returns { status: 'duplicate' | 'created', id? }
+async function createApplication(data, files) {
+  const conn = await db.getConnection();
 
-  const values = [
-    fullName,
-    email,
-    mobile,
-    position,
-    message || null,
-    resumePath,
-    citizenshipPath,
-  ];
+  try {
+    await conn.beginTransaction();
 
-  const [result] = await db.execute(sql, values);
+    // same email may not apply twice for the same position
+    const [dupes] = await conn.execute(
+      'SELECT id FROM applications WHERE email = ? AND position = ? LIMIT 1',
+      [data.email, data.position]
+    );
+    if (dupes.length > 0) {
+      await conn.rollback();
+      return { status: 'duplicate' };
+    }
 
-  return result.insertId;
+    // insert (parameterized: values never become part of the SQL text)
+    const [result] = await conn.execute(
+      `INSERT INTO applications
+        (full_name, email, mobile, position, message,
+         resume_path, resume_original, resume_mime, resume_size,
+         citizenship_path, citizenship_original, citizenship_mime, citizenship_size)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        data.fullName,
+        data.email,
+        data.mobile,
+        data.position,
+        data.message || null,
+        ...fileColumns(files.resume[0]),
+        ...fileColumns(files.citizenship[0]),
+      ]
+    );
+
+    await conn.commit();
+    return { status: 'created', id: result.insertId };
+  } catch (err) {
+    await conn.rollback().catch(() => {});
+    throw err;
+  } finally {
+    conn.release(); // always return the connection to the pool
+  }
 }
 
 // export
-module.exports = { findDuplicate, createApplication };
+module.exports = { createApplication };
