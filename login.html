@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login Page | Georgetown Electrical Systems</title>
     <meta name="description" content="Only used for admin login" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/services.css" />
 </head>
@@ -19,7 +22,7 @@
             </a>
             <nav aria-label="Main Navigation">
                 <ul class="nav-links">
-                    <li><a href="index.html" class="nav-link active">Home</a></li>
+                    <li><a href="index.html" class="nav-link">Home</a></li>
                     <li><a href="products.html" class="nav-link">Products</a></li>
                     <li><a href="services.html" class="nav-link">Services</a></li>
                     <li><a href="contactus.html" class="nav-link">Contact Us</a></li>
@@ -35,7 +38,7 @@
             </div>
 
             <div class="form-card">
-                <form id="loginForm">
+                <form id="loginForm" novalidate>
                     <div class="form-group">
                         <label for="username">Username *</label>
                         <input type="text" id="username" name="username" placeholder="Enter your username here" required />
@@ -44,8 +47,11 @@
                         <label for="password">Password *</label>
                         <input type="password" id="password" name="password" placeholder="Enter password here" required />
                     </div>
-                    <p id="login-message" role="alert"></p>
-                    <button type="submit" class="submit-btn">Login &rarr;</button>
+                    <div id="login-message" role="alert" hidden></div>
+                    <button type="submit" class="submit-btn apply-submit">
+                        <span class="btn-text">Log in</span>
+                        <span class="btn-arrow" aria-hidden="true">&rarr;</span>
+                    </button>
                 </form>
             </div>
         </div>

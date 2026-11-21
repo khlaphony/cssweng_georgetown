@@ -6,8 +6,8 @@ const POSITIONS = ['electrical-engineer', 'field-technician', 'project-manager',
 const MOBILE_REGEX = /^(\+63|0)\s?9\d{2}\s?\d{3}\s?\d{4}$/;
 const NAME_REGEX = /^[\p{L}\p{M}'.\- ]+$/u;
 const REQUIRED_FILES = {
-  resume: 'Credentials document',
-  citizenship: 'Citizenship ID',
+  resume: 'Resume',
+  citizenship: 'Proof of citizenship',
 };
 
 // multer leaves req.body undefined on non-multipart requests in Express 5

@@ -9,15 +9,15 @@ const { matchesSignature } = require('../utils/fileSignature');
 
 // constants
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB per file
-const DOC_EXTS = ['.pdf', '.doc', '.docx', '.png', '.jpg', '.jpeg'];
+const DOC_EXTS = ['.pdf'];
 
 // private folder, outside every express.static directory
 const uploadRoot = process.env.UPLOAD_DIR || path.join(__dirname, '..', '..', 'uploads');
 
 // per-field rules: folder, label shown to the user, allowed extensions
 const FIELD_RULES = {
-  resume: { dir: 'resumes', label: 'Credentials', exts: DOC_EXTS },
-  citizenship: { dir: 'citizenship', label: 'Citizenship ID', exts: DOC_EXTS },
+  resume: { dir: 'resumes', label: 'Resume', exts: DOC_EXTS },
+  citizenship: { dir: 'citizenship', label: 'Proof of citizenship', exts: DOC_EXTS },
 };
 
 // browser-reported MIME types accepted for each extension
@@ -73,7 +73,7 @@ const upload = multer({
     const formats = rule.exts.map((e) => e.slice(1).toUpperCase()).join(', ');
 
     if (!rule.exts.includes(ext)) {
-      return cb(new UploadError(`${rule.label} must be one of: ${formats}.`, file.fieldname));
+      return cb(new UploadError(`${rule.label} must be a ${formats} file.`, file.fieldname));
     }
     if (!MIME_BY_EXT[ext].includes(file.mimetype)) {
       return cb(new UploadError(`${rule.label} has an invalid file type.`, file.fieldname));

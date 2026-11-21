@@ -1,7 +1,7 @@
 // constants / references
 const API_URL = '/api/applications';
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
-const DOC_EXTENSIONS = ['pdf', 'doc', 'docx', 'png', 'jpg', 'jpeg'];
+const DOC_EXTENSIONS = ['pdf'];
 const POSITIONS = ['electrical-engineer', 'field-technician', 'project-manager', 'administrative-staff'];
 const MOBILE_REGEX = /^(\+63|0)\s?9\d{2}\s?\d{3}\s?\d{4}$/;
 const NAME_REGEX = /^[\p{L}\p{M}'.\- ]+$/u;
@@ -13,8 +13,8 @@ const submitBtnText = submitBtn.querySelector('.btn-text');
 
 // file fields: label + allowed extensions
 const FILE_FIELDS = {
-  resume: { label: 'Credentials', exts: DOC_EXTENSIONS },
-  citizenship: { label: 'Citizenship ID', exts: DOC_EXTENSIONS },
+  resume: { label: 'Resume', exts: DOC_EXTENSIONS },
+  citizenship: { label: 'Proof of citizenship', exts: DOC_EXTENSIONS },
 };
 
 let isSubmitting = false;
@@ -50,7 +50,7 @@ function showFieldErrors(errors) {
 function validateFile(file, label, allowed) {
   if (!file) return `${label} is required.`;
   const ext = file.name.split('.').pop().toLowerCase();
-  if (!allowed.includes(ext)) return `${label} must be one of: ${allowed.join(', ').toUpperCase()}.`;
+  if (!allowed.includes(ext)) return `${label} must be a PDF file.`;
   if (file.size > MAX_FILE_SIZE) return `${label} must be 5 MB or smaller.`;
   return null;
 }

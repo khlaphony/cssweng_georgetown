@@ -73,6 +73,8 @@ router.get('/admin/applications', async (req, res) => {
               mobile,
               position,
               message,
+              resume_original      AS resumeName,
+              citizenship_original AS citizenshipName,
               created_at AS createdAt
        FROM applications
        ORDER BY created_at DESC`
@@ -227,7 +229,15 @@ router.get('/admin/applications/:id/files/:kind', async (req, res) => {
     if (!file || !fs.existsSync(file)) {
       return res.status(404).json({ ok: false, message: 'File not found.' });
     }
-    res.download(file, row.originalName || path.basename(file));
+
+    const name = row.originalName || path.basename(file);
+    if (req.query.view === '1' && path.extname(file).toLowerCase() === '.pdf') {
+      res.setHeader('X-Content-Type-Options', 'nosniff');
+      res.setHeader('Cache-Control', 'private, no-store');
+      res.setHeader('Content-Disposition', `inline; filename="${name.replace(/[^\w.\- ]/g, '_')}"`);
+      return res.type('application/pdf').sendFile(file);
+    }
+    res.download(file, name);
   } catch (err) {
     console.error(err);
     res.status(500).json({ ok: false, message: 'Server error.' });

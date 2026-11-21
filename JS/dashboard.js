@@ -1,6 +1,7 @@
 // Admin dashboard logic.
 // Expected backend endpoints (all require an admin session cookie; 401 = not logged in):
-//   GET    /api/admin/applications          -> [ { id, fullName, position, email, mobile, message, resume, citizenship, createdAt }, ... ]
+//   GET    /api/admin/applications          -> [ { id, fullName, position, email, mobile, message, resumeName, citizenshipName, createdAt }, ... ]
+//   GET    /api/admin/applications/:id/files/:kind   kind = resume | citizenship, add ?view=1 to open a PDF inline
 //   DELETE /api/admin/applications/:id
 //   GET    /api/admin/applications/status   -> { open: true | false }
 //   POST   /api/admin/applications/status   body: { open: true | false }
@@ -56,11 +57,64 @@ function formatDate(value) {
   return d.toLocaleDateString('en-PH', { year: 'numeric', month: 'short', day: 'numeric' });
 }
 
-function fileHref(value) {
-  if (!value) return '';
-  if (/^(https?:)?\/\//.test(value) || value.startsWith('/')) return value;
-  return '/uploads/' + value; // adjust if your server serves uploads elsewhere
+function fileUrl(id, kind, view) {
+  return '/api/admin/applications/' + encodeURIComponent(id) + '/files/' + kind + (view ? '?view=1' : '');
 }
+
+const ICONS = {
+  eye: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',
+};
+
+function fileCell(id, kind, label, fileName, applicant) {
+  const td = document.createElement('td');
+  if (!fileName || !/\.pdf$/i.test(fileName)) {
+    td.textContent = '\u2013';
+    return td;
+  }
+
+  const viewBtn = document.createElement('button');
+  viewBtn.type = 'button';
+  viewBtn.className = 'icon-btn';
+  viewBtn.innerHTML = ICONS.eye;
+  viewBtn.title = 'View ' + label.toLowerCase();
+  viewBtn.setAttribute('aria-label', 'View ' + label.toLowerCase() + ' of ' + (applicant || 'applicant'));
+  viewBtn.addEventListener('click', () => openViewer(fileUrl(id, kind, true), fileUrl(id, kind, false), label + ' \u2013 ' + (applicant || 'Applicant'), fileName, viewBtn));
+  td.appendChild(viewBtn);
+  return td;
+}
+
+/* ---------- file viewer ---------- */
+
+const viewerEl = document.getElementById('fileViewer');
+const viewerTitleEl = document.getElementById('viewer-title');
+const viewerNameEl = document.getElementById('viewer-filename');
+const viewerFrame = document.getElementById('viewer-frame');
+const viewerDownload = document.getElementById('viewer-download');
+const viewerClose = document.getElementById('viewer-close');
+let viewerReturnFocus = null;
+
+function openViewer(viewSrc, downloadHref, title, fileName, trigger) {
+  viewerReturnFocus = trigger || null;
+  viewerTitleEl.textContent = title;
+  viewerNameEl.textContent = fileName;
+  viewerDownload.href = downloadHref;
+  viewerFrame.src = viewSrc;
+  viewerEl.hidden = false;
+  document.body.classList.add('viewer-open');
+  viewerClose.focus();
+}
+
+function closeViewer() {
+  if (viewerEl.hidden) return;
+  viewerEl.hidden = true;
+  viewerFrame.src = 'about:blank';
+  document.body.classList.remove('viewer-open');
+  if (viewerReturnFocus) viewerReturnFocus.focus();
+}
+
+viewerClose.addEventListener('click', closeViewer);
+viewerEl.addEventListener('click', (e) => { if (e.target === viewerEl) closeViewer(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeViewer(); });
 
 function emptyRow(tbody, colSpan, text, isError = false) {
   tbody.innerHTML = '';
@@ -113,7 +167,7 @@ function renderApplications(applications) {
     rowsEl.innerHTML = '';
     const tr = document.createElement('tr');
     const td = document.createElement('td');
-    td.colSpan = 8;
+    td.colSpan = 9;
     td.className = 'table-empty';
     td.textContent = 'No applications yet. New applications will appear here.';
     tr.appendChild(td);
@@ -139,22 +193,8 @@ function renderApplications(applications) {
     tr.appendChild(makeCell(pick(app, 'mobile')));
     tr.appendChild(makeCell(formatDate(pick(app, 'createdAt', 'created_at'))));
 
-    // Files
-    const filesTd = document.createElement('td');
-    [['Resume', pick(app, 'resume', 'resumePath', 'resume_path', 'resumeUrl', 'resume_url')],
-     ['Citizenship', pick(app, 'citizenship', 'citizenshipPath', 'citizenship_path', 'citizenshipUrl', 'citizenship_url')]]
-      .forEach(([label, value]) => {
-        if (!value) return;
-        const a = document.createElement('a');
-        a.href = fileHref(value);
-        a.target = '_blank';
-        a.rel = 'noopener';
-        a.textContent = label;
-        a.className = 'file-link';
-        filesTd.appendChild(a);
-      });
-    if (!filesTd.hasChildNodes()) filesTd.textContent = '\u2013';
-    tr.appendChild(filesTd);
+    tr.appendChild(fileCell(id, 'resume', 'Resume', pick(app, 'resumeName', 'resume_original'), name));
+    tr.appendChild(fileCell(id, 'citizenship', 'Proof of Citizenship', pick(app, 'citizenshipName', 'citizenship_original'), name));
 
     // Message (kept short, full text on hover/tap via title)
     const msg = pick(app, 'message');
@@ -302,7 +342,7 @@ async function loadApplications() {
     rowsEl.innerHTML = '';
     const tr = document.createElement('tr');
     const td = document.createElement('td');
-    td.colSpan = 8;
+    td.colSpan = 9;
     td.className = 'table-empty dash-error';
     td.textContent = 'Could not load applications. Refresh the page or try again later.';
     tr.appendChild(td);
