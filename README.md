@@ -81,7 +81,7 @@ node server/createAdmin.js admin testpass123
 - The password must be **at least 8 characters**.
 - You should see: `Admin "admin" saved.`
 - To change a password, run the same command again with the same username.
-- Each person's database is separate, so every teammate creates their own admin.
+- Each person's database is separate, so every member creates their own admin.
 
 ## Running the site
 
