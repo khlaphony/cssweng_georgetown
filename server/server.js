@@ -47,7 +47,9 @@ app.get('/dashboard.html', (req, res) => {
 // ---------- Helpers ----------
 const emailOk = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 const clean = (v) => (typeof v === 'string' ? v.trim() : '');
-const MOBILE_REGEX = /^(\+63|0)\s?9\d{2}\s?\d{3}\s?\d{4}$/;
+// Phone: mobile or landline, e.g. 0917 123 4567, +63 917 123 4567, (02) 8123 4567
+const phoneOk = (v) => /^\+?[\d\s()-]+$/.test(v) && /^\d{7,13}$/.test(v.replace(/\D/g, ''));
+const CONTACT_TOPICS = ['quotation', 'services', 'products', 'careers', 'other'];
 
 function readContactFields(body) {
   const b = body || {};
@@ -56,6 +58,7 @@ function readContactFields(body) {
     companyName: clean(b.companyName),
     email: clean(b.email),
     mobileNumber: clean(b.mobileNumber),
+    topic: clean(b.topic),
     message: clean(b.message),
   };
   const errors = {};
@@ -65,11 +68,18 @@ function readContactFields(body) {
 
   if (fields.companyName.length > 150) errors.companyName = 'Company name must be 150 characters or fewer.';
 
-  if (!emailOk(fields.email) || fields.email.length > 255) errors.email = 'Please enter a valid email address.';
-
-  if (!MOBILE_REGEX.test(fields.mobileNumber)) {
-    errors.mobileNumber = 'Please enter a valid Philippine mobile number (e.g. +63 900 000 0000 or 0900 000 0000).';
+  if (!fields.email && !fields.mobileNumber) {
+    errors.email = 'Please enter an email address or a phone number so we can reply.';
+  } else {
+    if (fields.email && (!emailOk(fields.email) || fields.email.length > 255)) {
+      errors.email = 'Please enter a valid email address.';
+    }
+    if (fields.mobileNumber && !phoneOk(fields.mobileNumber)) {
+      errors.mobileNumber = 'Please enter a valid phone number (e.g. 0917 123 4567 or (02) 8123 4567).';
+    }
   }
+
+  if (!CONTACT_TOPICS.includes(fields.topic)) errors.topic = 'Please choose a topic.';
 
   if (!fields.message) errors.message = 'Please enter a message.';
   else if (fields.message.length > 2000) errors.message = 'Message must be 2000 characters or fewer.';
@@ -86,15 +96,17 @@ app.post('/api/contact', async (req, res) => {
   const { fields, errors } = readContactFields(req.body);
   if (Object.keys(errors).length > 0) return sendFieldErrors(res, errors);
 
-  const { contactName, email, mobileNumber, message } = fields;
+  const { contactName, topic, message } = fields;
   const companyName = fields.companyName || null;
+  const email = fields.email || null;
+  const mobileNumber = fields.mobileNumber || null;
 
   try {
     await pool.execute(
       `INSERT INTO contact_messages
-       (contact_name, company_name, email, mobile_number, message)
-       VALUES (?, ?, ?, ?, ?)`,
-      [contactName, companyName, email, mobileNumber, message]
+       (contact_name, company_name, email, mobile_number, topic, message)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [contactName, companyName, email, mobileNumber, topic, message]
     );
     res.status(201).json({ ok: true });
   } catch (err) {

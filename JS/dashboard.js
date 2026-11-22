@@ -20,6 +20,18 @@ const titleEl = document.getElementById('dash-title');
 const contactRowsEl = document.getElementById('contactRows');
 const contactTotalEl = document.getElementById('contact-total');
 const contactLatestEl = document.getElementById('contact-latest');
+const contactUnrepliedEl = document.getElementById('contact-unreplied');
+const unrepliedBadge = document.getElementById('unreplied-badge');
+const CONTACT_COLS = 8;
+const REFRESH_MS = 120000; // check for new contact requests every 2 minutes
+
+const TOPIC_LABELS = {
+  quotation: 'Quotation request',
+  services: 'Services',
+  products: 'Products',
+  careers: 'Careers / Applications',
+  other: 'Other',
+};
 const tabs = document.querySelectorAll('.dash-tab');
 
 const VIEWS = {
@@ -211,12 +223,72 @@ function renderApplications(applications) {
   });
 }
 
+function formatDateTime(value) {
+  const d = new Date(value);
+  if (!value || isNaN(d)) return '';
+  return d.toLocaleString('en-PH', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+}
+
+function contactCell(email, phone) {
+  const td = document.createElement('td');
+  td.className = 'contact-cell';
+  [['Email', email], ['Phone', phone]].forEach(([label, value]) => {
+    if (!value) return;
+    const line = document.createElement('span');
+    line.className = 'contact-line';
+    const tag = document.createElement('small');
+    tag.textContent = label;
+    line.append(tag, document.createTextNode(value));
+    td.appendChild(line);
+  });
+  if (!td.childNodes.length) td.textContent = '\u2013';
+  return td;
+}
+
+function renderUnreplied(contacts) {
+  const count = contacts.filter(c => !c.replied).length;
+  contactUnrepliedEl.textContent = count;
+  unrepliedBadge.textContent = count;
+  unrepliedBadge.hidden = count === 0;
+  unrepliedBadge.setAttribute('aria-label', count + ' not yet replied');
+}
+
+function repliedCell(contact, name) {
+  const td = document.createElement('td');
+  td.className = 'replied-cell';
+  const label = document.createElement('label');
+  label.className = 'replied-toggle';
+
+  const box = document.createElement('input');
+  box.type = 'checkbox';
+  box.checked = Boolean(contact.replied);
+  box.setAttribute('aria-label', 'Mark message from ' + (name || 'sender') + ' as replied');
+  box.addEventListener('change', () => setReplied(contact, box));
+
+  const mark = document.createElement('span');
+  mark.className = 'replied-mark';
+  mark.setAttribute('aria-hidden', 'true');
+
+  label.append(box, mark);
+  td.appendChild(label);
+
+  const when = formatDateTime(pick(contact, 'repliedAt', 'replied_at'));
+  if (contact.replied && when) {
+    const small = document.createElement('small');
+    small.className = 'replied-when';
+    small.textContent = when;
+    td.appendChild(small);
+  }
+  return td;
+}
+
 function renderContacts(contacts) {
   contactTotalEl.textContent = contacts.length;
   contactLatestEl.textContent = newestDate(contacts);
+  renderUnreplied(contacts);
 
   if (contacts.length === 0) {
-    emptyRow(contactRowsEl, 7, 'No contact requests yet. Messages from the Contact Us page will appear here.');
+    emptyRow(contactRowsEl, CONTACT_COLS, 'No contact requests yet. Messages from the Contact Us page will appear here.');
     return;
   }
 
@@ -224,12 +296,15 @@ function renderContacts(contacts) {
   contacts.forEach(contact => {
     const id = pick(contact, 'id');
     const name = pick(contact, 'contactName', 'contact_name');
+    const topic = pick(contact, 'topic');
     const tr = document.createElement('tr');
+    tr.className = contact.replied ? 'is-replied' : 'is-unreplied';
 
+    tr.appendChild(repliedCell(contact, name));
     tr.appendChild(makeCell(name));
     tr.appendChild(makeCell(pick(contact, 'companyName', 'company_name')));
-    tr.appendChild(makeCell(pick(contact, 'email')));
-    tr.appendChild(makeCell(pick(contact, 'mobileNumber', 'mobile_number')));
+    tr.appendChild(contactCell(pick(contact, 'email'), pick(contact, 'mobileNumber', 'mobile_number')));
+    tr.appendChild(makeCell(TOPIC_LABELS[topic] || topic));
     tr.appendChild(makeCell(formatDate(pick(contact, 'createdAt', 'created_at'))));
 
     const msgTd = makeCell(pick(contact, 'message'));
@@ -265,7 +340,7 @@ function showView(name) {
   history.replaceState(null, '', name === 'applications' ? location.pathname : '#' + name);
 }
 
-async function loadContacts() {
+async function loadContacts(quiet = false) {
   try {
     const res = await api('/api/admin/contact-messages');
     if (!res.ok) throw new Error('Request failed');
@@ -273,7 +348,27 @@ async function loadContacts() {
     renderContacts(Array.isArray(data) ? data : (data.messages || []));
   } catch (err) {
     if (err.message === 'Not logged in') return;
-    emptyRow(contactRowsEl, 7, 'Could not load contact requests. Refresh the page or try again later.', true);
+    if (!quiet) emptyRow(contactRowsEl, CONTACT_COLS, 'Could not load contact requests. Refresh the page or try again later.', true);
+  }
+}
+
+async function setReplied(contact, box) {
+  const replied = box.checked;
+  box.disabled = true;
+  try {
+    const res = await api('/api/admin/contact-messages/' + encodeURIComponent(contact.id) + '/replied', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ replied }),
+    });
+    if (!res.ok) throw new Error('Request failed');
+    showMessage(replied ? 'Marked as replied.' : 'Marked as not yet replied.');
+    loadContacts(true);
+  } catch (err) {
+    if (err.message === 'Not logged in') return;
+    box.checked = !replied; // undo the tick if ever the saving failed
+    box.disabled = false;
+    showMessage('Could not update the replied status. Please try again.', true);
   }
 }
 
@@ -373,3 +468,11 @@ showView(location.hash.slice(1));
 loadStatus();
 loadApplications();
 loadContacts();
+
+// Auto-refresh contact requests so new messages appear without reloading the page. (this is every 2 minutes)
+setInterval(() => {
+  if (document.hidden) return;
+  if (contactRowsEl.querySelector('input[type="checkbox"]:disabled')) return;
+  loadContacts(true);
+}, REFRESH_MS);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) loadContacts(true); });

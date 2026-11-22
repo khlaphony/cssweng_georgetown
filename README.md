@@ -59,8 +59,7 @@ Replace `your_mysql_root_password` with the password you set when installing MyS
    1. `server/schema.sql`
    2. `server/migrations/applicationForm.sql`
    3. `server/migrations/applicationFormFrontendCompatibility.sql`
-
-Yellow warning icons in the Output panel are normal. Red errors are not.
+   4. `server/migrations/contactMessages.sql` (contact form topic + "Replied" checkmark)
 
 To check that it worked, run `SHOW TABLES FROM georgetown;`. You should see: `admins`, `applications`, `contact_messages` and `settings`.
 
@@ -103,6 +102,6 @@ Keep the Command Prompt open while using the site. Press **Ctrl + C** to stop th
 ## After pulling new changes
 
 1. Run `npm install` in case new packages were added.
-2. If any `.sql` file changed, re-run `server/migrations/applicationFormFrontendCompatibility.sql` in Workbench.
+2. If any `.sql` file changed, re-run `server/migrations/applicationFormFrontendCompatibility.sql` and `server/migrations/contactMessages.sql` in Workbench (both are safe to run again). Do **not** re-run `schema.sql` or `applicationForm.sql` on an existing database.
 3. Restart the server (**Ctrl + C**, then `npm start`).
 4. Press **Ctrl + F5** in the browser to load the newest pages.

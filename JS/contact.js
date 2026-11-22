@@ -4,9 +4,13 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!form) return;
 
   const submitText = submitBtn ? submitBtn.querySelector(".btn-text") : null;
-  const MOBILE_REGEX = /^(\+63|0)\s?9\d{2}\s?\d{3}\s?\d{4}$/;
   const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const FIELDS = ["contactName", "companyName", "email", "mobileNumber", "message"];
+  // Phone: mobile or landline, e.g. 0917 123 4567, +63 917 123 4567, (02) 8123 4567
+  const phoneOk = (v) => /^\+?[\d\s()-]+$/.test(v) && /^\d{7,13}$/.test(v.replace(/\D/g, ""));
+  const TOPICS = ["quotation", "services", "products", "careers", "other"];
+  const FIELDS = ["contactName", "companyName", "email", "mobileNumber", "topic", "message"];
+
+  /* ---------- inline messages ---------- */
 
   const showMessage = (type, text) => {
     let box = document.getElementById("formMessage");
@@ -41,11 +45,22 @@ document.addEventListener("DOMContentLoaded", () => {
     const errors = {};
     if (!v.contactName) errors.contactName = "Please enter your name.";
     else if (v.contactName.length > 150) errors.contactName = "Name must be 150 characters or fewer.";
+
     if (v.companyName.length > 150) errors.companyName = "Company name must be 150 characters or fewer.";
-    if (!EMAIL_REGEX.test(v.email) || v.email.length > 255) errors.email = "Please enter a valid email address.";
-    if (!MOBILE_REGEX.test(v.mobileNumber)) {
-      errors.mobileNumber = "Please enter a valid Philippine mobile number (e.g. +63 900 000 0000 or 0900 000 0000).";
+
+    if (!v.email && !v.mobileNumber) {
+      errors.email = "Please enter an email address or a phone number so our team can get back to you.";
+    } else {
+      if (v.email && (!EMAIL_REGEX.test(v.email) || v.email.length > 255)) {
+        errors.email = "Please enter a valid email address.";
+      }
+      if (v.mobileNumber && !phoneOk(v.mobileNumber)) {
+        errors.mobileNumber = "Please enter a valid phone number.";
+      }
     }
+
+    if (!TOPICS.includes(v.topic)) errors.topic = "Please choose a topic.";
+
     if (!v.message) errors.message = "Please enter a message.";
     else if (v.message.length > 2000) errors.message = "Message must be 2000 characters or fewer.";
     return errors;
@@ -53,8 +68,53 @@ document.addEventListener("DOMContentLoaded", () => {
 
   FIELDS.forEach((id) => {
     const input = document.getElementById(id);
-    if (input) input.addEventListener("input", () => setFieldError(id, ""));
+    if (!input) return;
+    const evt = input.tagName === "SELECT" ? "change" : "input";
+    input.addEventListener(evt, () => {
+      setFieldError(id, "");
+      // typing in either contact field clears the "at least one" error on the other
+      if (id === "email" || id === "mobileNumber") {
+        setFieldError(id === "email" ? "mobileNumber" : "email", "");
+      }
+    });
   });
+
+  /* -------- popup alert (confirmation) ---------- */
+
+  const modal = document.getElementById("sent-modal");
+  const modalText = document.getElementById("sent-text");
+  const modalClose = document.getElementById("sent-close");
+
+  const replyChannel = (email, phone) => {
+    if (email && phone) return `email (${email}) or phone number (${phone})`;
+    if (email) return `email (${email})`;
+    return `phone number (${phone})`;
+  };
+
+  const openModal = (name, email, phone) => {
+    const firstName = name.split(/\s+/)[0];
+    modalText.textContent =
+      `Thank you, ${firstName}! We've received your message. ` +
+      `Our team will reply to you through your provided ${replyChannel(email, phone)}.`;
+    modal.hidden = false;
+    document.body.classList.add("modal-open");
+    modalClose.focus();
+  };
+
+  const closeModal = () => {
+    if (modal.hidden) return;
+    modal.hidden = true;
+    document.body.classList.remove("modal-open");
+    if (submitBtn) submitBtn.focus();
+  };
+
+  if (modal) {
+    modalClose.addEventListener("click", closeModal);
+    modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
+  }
+
+  /* ---------- submit ---------- */
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -89,8 +149,8 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      showMessage("success", "Thank you! Your message has been sent. Our team will get back to you soon.");
       form.reset();
+      openModal(submission.contactName, submission.email, submission.mobileNumber);
     } catch (error) {
       console.error("Unable to send contact submission:", error);
       showMessage("error", "Could not reach the server. Please check your connection and try again.");

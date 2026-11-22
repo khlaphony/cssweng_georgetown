@@ -348,3 +348,143 @@ body.viewer-open {
         border-radius: 0;
     }
 }
+
+/* ---------- Contact requests: replied checkmark ---------- */
+.tab-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.35rem;
+    height: 1.35rem;
+    margin-left: 0.35rem;
+    padding: 0 0.4rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #fff;
+    background: var(--dash-danger);
+    border-radius: 9999px;
+}
+
+.tab-badge[hidden] {
+    display: none;
+}
+
+.summary-unreplied .summary-value {
+    color: var(--dash-danger);
+}
+
+.app-table tr.is-unreplied td {
+    background: #fff7ed;
+}
+
+.app-table tr.is-unreplied td:first-child {
+    box-shadow: inset 4px 0 0 var(--color-primary);
+}
+
+.app-table tr.is-replied td {
+    color: var(--dash-muted);
+}
+
+.replied-cell {
+    text-align: center;
+    white-space: nowrap;
+}
+
+.replied-toggle {
+    position: relative;
+    display: inline-flex;
+    cursor: pointer;
+}
+
+.replied-toggle input {
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.replied-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: var(--dash-surface);
+    border: 2px solid #a1a1aa;
+    border-radius: 8px;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.replied-toggle:hover .replied-mark {
+    border-color: var(--dash-success);
+}
+
+.replied-toggle input:checked + .replied-mark {
+    background: var(--dash-success);
+    border-color: var(--dash-success);
+}
+
+.replied-toggle input:checked + .replied-mark::after {
+    content: "";
+    width: 7px;
+    height: 13px;
+    margin-top: -3px;
+    border: solid #fff;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+}
+
+.replied-toggle input:focus-visible + .replied-mark {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+.replied-toggle input:disabled + .replied-mark {
+    opacity: 0.5;
+}
+
+.replied-when {
+    display: block;
+    margin-top: 0.3rem;
+    font-size: 0.72rem;
+    color: var(--dash-muted);
+}
+
+#contactRows td:nth-child(2),
+#contactRows td:nth-child(6) {
+    white-space: nowrap;
+}
+
+#contactRows .message-cell {
+    min-width: 220px;
+}
+
+.contact-cell {
+    white-space: nowrap;
+}
+
+.contact-line {
+    display: block;
+}
+
+.contact-line + .contact-line {
+    margin-top: 0.2rem;
+}
+
+.contact-line small {
+    display: inline-block;
+    width: 3.2rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--dash-muted);
+}
+
+.contact-table th,
+.contact-table td {
+    padding-left: 0.7rem;
+    padding-right: 0.7rem;
+}

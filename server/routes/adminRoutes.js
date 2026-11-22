@@ -121,12 +121,38 @@ router.get('/admin/contact-messages', async (req, res) => {
               company_name  AS companyName,
               email,
               mobile_number AS mobileNumber,
+              topic,
               message,
+              replied,
+              replied_at    AS repliedAt,
               created_at    AS createdAt
        FROM contact_messages
        ORDER BY created_at DESC`
     );
-    res.json(rows);
+    res.json(rows.map((r) => ({ ...r, replied: Boolean(r.replied) })));
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ ok: false, message: 'Server error.' });
+  }
+});
+
+// Mark a contact message as replied / not yet replied
+router.patch('/admin/contact-messages/:id/replied', async (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id)) return res.status(400).json({ ok: false, message: 'Invalid id.' });
+  if (typeof req.body.replied !== 'boolean') {
+    return res.status(400).json({ ok: false, message: 'Invalid value.' });
+  }
+
+  try {
+    const [result] = await pool.execute(
+      `UPDATE contact_messages
+       SET replied = ?, replied_at = IF(?, CURRENT_TIMESTAMP, NULL)
+       WHERE id = ?`,
+      [req.body.replied ? 1 : 0, req.body.replied ? 1 : 0, id]
+    );
+    if (result.affectedRows === 0) return res.status(404).json({ ok: false, message: 'Not found.' });
+    res.json({ ok: true, replied: req.body.replied });
   } catch (err) {
     console.error(err);
     res.status(500).json({ ok: false, message: 'Server error.' });
